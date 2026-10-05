@@ -495,6 +495,19 @@ espaciado de 44 px para el tacto, sombras y componentes declarativos (`.boton`, 
 - `supabase/verificar.sql`, consultable y reutilizable en cualquier momento.
 - El sistema de diseno completo y las cinco pantallas base.
 
+
+### Acceso desde el celular durante el desarrollo
+
+Se configuro el servidor de desarrollo para escuchar en todas las interfaces (`host: true` en
+`vite.config.ts`), de modo que la aplicacion se puede abrir desde el celular en la misma red local
+usando `http://192.168.1.68:5173`.
+
+Detalle util de esta maquina: la primera peticion al servidor tardó 17 segundos (arranque en frio,
+precompilacion de dependencias y compilacion de componentes) y las siguientes bajaron a menos de un
+segundo. Si la pagina parece colgada, recargar: casi siempre es el arranque en frio, no un error.
+
+Nota: `localhost` en el celular apunta al celular. Hay que usar la IP de la red.
+
 ### Nota sobre el tamano del bundle
 
 El bundle paso de 74 KB a 86 KB gzip por sumar la navegacion, los iconos de Lucide y las pantallas.
