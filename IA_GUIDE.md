@@ -26,7 +26,8 @@ decisiones y cambios.
 | [T03](#t03-plan-de-producto-v2) | Plan de producto v2 (visión, roadmap, este registro) | Completada |
 | [T03c](#t03c--confirmación-del-stack-y-modelo-de-cobro) | Confirmación de stack, costos reales y modelo de cobro | Completada |
 | [T04](#t04-fase-0--cimientos) | Fase 0: cimientos del proyecto | Completada |
-| [T05](#t05-fase-1--diseño-y-navegación) | Fase 1: diseño y navegación | Pendiente |
+| [T04b](#t04b--base-de-datos-en-supabase-y-fase-1-inicio) | Base de datos aplicada y verificada, inicio de Fase 1 | Completada |
+| [T05](#t05-fase-1--diseño-y-navegación) | Fase 1: diseño y navegación | En curso |
 | [T06](#t06-fase-2--cuentas-y-negocios) | Fase 2: cuentas y negocios | Pendiente |
 | [T07](#t07-fase-3--inventario-y-costos) | Fase 3: inventario y costos reales | Pendiente |
 | [T08](#t08-fase-4--clientes-y-pedidos) | Fase 4: clientes y pedidos | Pendiente |
@@ -412,6 +413,96 @@ muy limitado. Cuando se implemente el registro de usuarios habra que configurar 
 
 ---
 
+## T04b · Base de datos en Supabase y Fase 1 (inicio)
+
+### Prompt textual
+
+> "Me dice Succes. No rows returned"
+
+> "borro lo que habia puesto y pongo esto que me dices ahora?"
+
+> "borre todo y puse lo que me dijiste, al poner run me sale ua tabla que dice anon_ve_negocios false
+> anon_inserta_productos false anon_ve_clientes false pero no veo esos numeros que decis, que es eso de
+> anon?"
+
+> "Ah muchas gracias por aclararme y por toda la ayuda, no se qué haría sin vos :D me salió tablas 14
+> con_rls 14 politicas 17 unidades_cargadas 7"
+
+### Estado
+
+Completada.
+
+### Migracion aplicada y verificada
+
+El usuario aplico `0001_esquema_inicial.sql` desde el editor SQL del panel (el Supabase CLI no funciona
+en la maquina). La verificacion con `supabase/verificar.sql` dio exactamente lo esperado:
+
+| Verificacion | Resultado | Interpretacion |
+|---|---|---|
+| Tablas | 14 | Esquema completo |
+| Tablas con RLS | 14 | Todas protegidas |
+| Politicas | 17 | Aislamiento por negocio aplicado |
+| Unidades cargadas | 7 | Catalogo global poblado |
+| `anon` puede ver negocios | false | Visitantes sin cuenta no leen datos |
+| `anon` puede insertar productos | false | No pueden escribir nada |
+| `anon` puede ver clientes | false | Datos personales de clientes protegidos |
+| Funciones de apoyo | 3, todas `security_definer` | La pertenencia a un negocio no se puede falsear |
+
+### Lo que se le explico al usuario
+
+- Que es el rol `anon`: el rol de Postgres que usa toda peticion que no tiene sesion iniciada, que
+  incluye la propia aplicacion web. Como la clave publicada va incrustada en el codigo y es publica,
+  este chequeo determina que puede hacer alguien que copie esa clave sin ser cliente.
+- Que el editor de Supabase muestra solo el resultado de la ultima consulta cuando se mandan varias
+  juntas, por eso era preferible correrlas de a una.
+
+### Fase 1 (inicio): sistema de diseño y navegación
+
+Construido el esqueleto mobile first con navegacion inferior en movil y barra lateral en escritorio:
+
+| Archivo | Contenido |
+|---|---|
+| `src/lib/rutas.ts` | Rutas tipadas y resolucion por hash, sin libreria de enrutado |
+| `src/layouts/MarcoApp.svelte` | Marco con navegacion adaptativa y area segura inferior |
+| `src/components/Boton.svelte` | Boton con variantes primario, secundario, fantasma y peligro |
+| `src/components/Campo.svelte` | Campo de formulario con etiqueta, error y descripcion |
+| `src/components/Tarjeta.svelte` | Contenedor de contenido |
+| `src/components/EstadoVacio.svelte` | Estado vacio con icono, texto y accion |
+| `src/pages/*.svelte` | Inicio, Pedidos, Agenda, Inventario y Mas |
+
+El sistema de diseno vive en `src/app.css` y `tailwind.config.js`: paleta propia, tipografia,
+espaciado de 44 px para el tacto, sombras y componentes declarativos (`.boton`, `.campo`,
+`.tarjeta`, `.error-campo`).
+
+### Verificaciones
+
+| Verificacion | Resultado |
+|---|---|
+| Tests | 48 pasan |
+| Typecheck | 0 errores, 0 avisos |
+| Build | Correcto, 85,85 KB gzip |
+
+### Errores propios corregidos durante la fase
+
+| Error | Causa |
+|---|---|
+| `tipo`, `nombre`, `requerido` no existen como atributos | Properties del componente con nombre en espanol proyectadas sobre atributos HTML en ingles |
+| `bind:value` sin variable `value` | El componente usa `valor` con `$bindable`, habia que enlazar explicitamente |
+| `await` en el `<script>` del componente | Svelte 5 no permite espera en el nivel superior del componente; se movio a `onMount` |
+
+### Agregado
+
+- `supabase/verificar.sql`, consultable y reutilizable en cualquier momento.
+- El sistema de diseno completo y las cinco pantallas base.
+
+### Nota sobre el tamano del bundle
+
+El bundle paso de 74 KB a 86 KB gzip por sumar la navegacion, los iconos de Lucide y las pantallas.
+El costo viene casi entero de la libreria de iconos. Cuando se sepa que iconos se usan de verdad,
+conviene importar solo esos y no el paquete completo.
+
+---
+
 ## T05 · Fase 1: diseño y navegación
 
 ### Prompt textual
@@ -518,3 +609,5 @@ Tabla maestra. Si una decisión cambia, se agrega una fila nueva en lugar de ree
 | D14 | Codigo de la v1 conservado en `legacy/` | T04 | Sirve de referencia para comparar y no estorba el desarrollo nuevo | Sí |
 | D15 | Configuracion de tests separada de la de Vite | T04 | Vitest arrastra su propia copia de Vite y los tipos de plugins chocaban | Sí |
 | D16 | Las tres opciones del asistente de Supabase marcadas | T04 | La RLS automatica evita que una tabla nueva quede abierta por olvido | Sí |
+| D17 | Navegacion por hash propia, sin libreria de enrutado | T04b | Cinco rutas no justifican una dependencia; ademas mantiene el bundle chico | Sí |
+| D18 | Componentes con propiedades en espanol y atributos HTML en ingles | T04b | Evita las colisiones entre el nombre de la property y el del atributo real | No (es convencion del proyecto) |
