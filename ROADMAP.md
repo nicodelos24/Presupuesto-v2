@@ -259,8 +259,14 @@ consecuencias concretas y ya verificadas:
 | Herramienta | Estado | Acción |
 |---|---|---|
 | **Supabase CLI** | No arranca (`Illegal instruction`) | **No se usa.** Las migraciones se aplican desde el editor SQL del panel web. Los archivos `.sql` se versionan en el repo para tener el historial. |
-| **Node 20, npm, esbuild, Vite** | Funcionan (esbuild 0.28.2 verificado) | Se pueden usar con normalidad. |
-| **Tests** | Funcionan (Node puro o Vitest) | Sin restricciones. |
+| **Node 20, npm, esbuild, Vite** | Funcionan (esbuild 0.28.2, Vite 6.4.3) | Verificado con un build de producción real. |
+| **Tailwind 3.4** | Funciona | Se eligió la versión 3 porque la 4 depende de un binario nativo (lightningcss) que puede no arrancar en esta CPU. |
+| **Tests (Vitest)** | Funcionan | 48 tests en unos 90 segundos. |
+
+Tiempos reales de esta máquina, medidos en la Fase 0: `npm install` unos 5 minutos, la suite de
+tests unos 90 segundos, `svelte-check` unos 2 minutos y el build de producción 1 minuto 41 segundos.
+Es lento pero perfectamente utilizable. Si se vuelve un cuello de botella, la alternativa es ejecutar
+el build en la nube y usar esta máquina solo para editar.
 
 Regla derivada: **preferir herramientas que corran en Node puro** (Vitest, Playwright) y evitar
 binarios nativos modernos. El build de producción ocurre igual en la nube (Cloudflare), así que el
@@ -460,7 +466,7 @@ Mapeo entre los problemas documentados en `DOCUMENTACION.md` y dónde se resuelv
 Temas a cerrar antes de arrancar la Fase 0.
 
 1. ~~**¿Supabase o Firebase?**~~ **Resuelto: Supabase**, confirmado por el usuario (ver 4.2 y
-   registro de decisiones D01).
+   registro de decisiones D01). Proyecto creado en la Fase 0.
 2. **¿Nombre comercial y dominio?** Importa desde ya, porque define las URLs, el correo de
    recuperación de contraseña y el texto legal.
 3. **¿Precio de la cuota mensual?** Define los límites del plan gratuito. Ya está definido el modelo

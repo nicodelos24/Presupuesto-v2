@@ -25,7 +25,7 @@ decisiones y cambios.
 | [T02](#t02-migración-a-presupuesto-v2) | Migración del repo a Presupuesto-v2 | Completada |
 | [T03](#t03-plan-de-producto-v2) | Plan de producto v2 (visión, roadmap, este registro) | Completada |
 | [T03c](#t03c--confirmación-del-stack-y-modelo-de-cobro) | Confirmación de stack, costos reales y modelo de cobro | Completada |
-| [T04](#t04-fase-0--cimientos) | Fase 0: cimientos del proyecto | Pendiente |
+| [T04](#t04-fase-0--cimientos) | Fase 0: cimientos del proyecto | Completada |
 | [T05](#t05-fase-1--diseño-y-navegación) | Fase 1: diseño y navegación | Pendiente |
 | [T06](#t06-fase-2--cuentas-y-negocios) | Fase 2: cuentas y negocios | Pendiente |
 | [T07](#t07-fase-3--inventario-y-costos) | Fase 3: inventario y costos reales | Pendiente |
@@ -312,6 +312,106 @@ ningún cálculo al DOM.
 
 ---
 
+## T04 · Fase 0: cimientos
+
+### Prompt textual
+
+> "Perfecto, ahora todo este repo lo copié a Presupuesto-v2, podemos pasarnos a este repo y me haces
+> los commit push? Así ya te planteo la consigna"
+
+Seguido de la confirmación de stack:
+
+> "Perfecto, esta idea me encanta porque puedo crear la aplicación y si algún dia algún cliente
+> quiere comprar mi servicio puedo activar el plan pro cobrandole alguna cuota mensual para el
+> mantenimiento de su página no? Me encantó esa idea, me ayudas con supabase entonces? Me gustaría
+> buscar también una opción distinta a github pages ya que el problema es que debo dejar el código
+> publico, pero por ahora centrémonos en lo que falta para comenzar, decime qué hago con lo de
+> supabase asi continuamos, si precise instalar algo hazlo"
+
+Y las consultas durante la configuración:
+
+> "pongo enable data api y automatically expose new tablets que vienen marcadas por defecto? También
+> hay una opcion sin marcar que dice enable automatic RLS"
+
+### Estado
+
+Completada.
+
+### Trabajo realizado
+
+1. **Proyecto base**: Vite 6 + Svelte 5 + TypeScript estricto + Tailwind 3.4 + Vitest.
+2. **Codigo de la v1 movido a `legacy/`** para conservarlo como referencia sin que estorbe el
+   desarrollo nuevo.
+3. **Motor de costeo reescrito** en TypeScript (`src/lib/costing.ts` y `src/lib/unidades.ts`) como
+   funciones puras, sin DOM y sin dependencias.
+4. **48 tests unitarios** que cubren conversiones, prorrateo de paquetes, margen y redondeo.
+5. **Migracion SQL inicial** (`supabase/migrations/0001_esquema_inicial.sql`) con 14 tablas, indices,
+   funciones de apoyo y 18 politicas de Row Level Security.
+6. **Shell de la aplicacion** con el sistema de diseno aplicado y una pantalla que muestra el estado
+   de la conexion y un ejemplo de costeo real.
+
+### Bugs corregidos en el motor (cubiertos por tests)
+
+| Bug heredado | Correccion |
+|---|---|
+| Producto con costo manual imposible de guardar | `costoDeProducto` acepta `costoManual` y lo respeta sin invalidar los errores de la receta |
+| Pedir paquetes de un insumo simple daba un costo miles de veces menor | Devuelve el error `paquete-sobre-ingrediente-simple` en vez de un numero falso |
+| Costos congelados sin recalcular | El costo se calcula siempre desde el inventario, nunca queda guardado en el producto |
+| Ingredientes identificados por nombre | Todo se identifica por `id` |
+| Mezclar peso y volumen en silencio | `convertirCantidad` devuelve `null` y el costeo marca `unidad-incompatible` |
+| Paquetes prorroteados con la unidad equivocada | El precio por unidad base se calcula sobre el contenido real del paquete |
+
+### Dos bugs encontrados por los tests durante esta fase
+
+| Bug | Sintoma | Causa |
+|---|---|---|
+| Prorrateo de paquetes | 4 paquetes de 500 g por $900, receta de 250 g daba $28,125 en vez de $112,50 | Se dividia el precio del lote por la cantidad de paquetes y despues se prorroteaba |
+| Test con unidades mezcladas | Un test pedia 2 unidades a un paquete cuyo contenido estaba en gramos | El test mezclaba tipos de unidad; se reescribio con dos casos correctos |
+
+El primero es exactamente el tipo de error que la v1 hacia en silencio. Ahora lo detecta el test.
+
+### Verificaciones
+
+| Verificacion | Resultado |
+|---|---|
+| Tests | 48 pasan |
+| Typecheck (`svelte-check`) | 0 errores, 0 avisos |
+| Build de produccion | Correcto, 74,65 KB gzip de JavaScript |
+| Conexion con Supabase | Correcta, responde 200 |
+
+### Agregado
+
+- `src/lib/tipos.ts`, `src/lib/unidades.ts`, `src/lib/costing.ts` y sus tests.
+- `src/lib/supabase.ts` con el cliente y deteccion de configuracion faltante.
+- `supabase/migrations/0001_esquema_inicial.sql`.
+- `.gitignore` que protege `.env`, `node_modules` y `dist`.
+- `.env.example` con las variables documentadas.
+
+### Cambiado
+
+- El codigo de la v1 dejo de estar en la raiz y paso a `legacy/`.
+- La configuracion de tests se separo de la de Vite (`vitest.config.ts`) porque Vitest trae su
+  propia copia de Vite y los tipos chocaban.
+- Se eligio Tailwind 3.4 en lugar de la version 4: la 4 depende de un binario nativo que puede no
+  funcionar en la CPU de la maquina de desarrollo. Se podra migrar cuando el equipo se actualice.
+
+### Notas de la configuracion de Supabase
+
+- Las tres opciones del asistente quedaron marcadas: Data API, exponer tablas nuevas automaticamente y
+  RLS automatica. La tercera instala un trigger que activa la RLS en cada tabla nueva, de modo que
+  falla hacia el cerrado en vez de dejar la tabla abierta.
+- La migracion ademas hace `revoke` de los permisos de `anon`, porque la aplicacion exige cuenta y no
+  necesita acceso sin iniciar sesion.
+- La clave publicada (`sb_publishable_...`) vive en `.env`, que esta en `.gitignore`. Nunca se sube.
+
+### Limitacion detectada en Supabase
+
+El envio de correos de confirmacion esta habilitado, pero el plan gratuito tiene un SMTP integrado
+muy limitado. Cuando se implemente el registro de usuarios habra que configurar un SMTP propio
+(Resend, Brevo o similar, con dominio propio) para que los correos lleguen a clientes reales.
+
+---
+
 ## T05 · Fase 1: diseño y navegación
 
 ### Prompt textual
@@ -414,3 +514,7 @@ Tabla maestra. Si una decisión cambia, se agrega una fila nueva en lugar de ree
 | D10 | **Un proyecto de Supabase por cliente** | T03c | Permite cobrar la cuota mensual, aislar datos y dar de baja un cliente sin riesgo | No una vez que haya clientes |
 | D11 | **No usar el Supabase CLI** | T03c | El binario no arranca en la CPU de la máquina de desarrollo (Intel Atom N450). Las migraciones se aplican desde el editor SQL del panel web | Sí |
 | D12 | Deploy en plan Pro recién cuando hay cliente | T03c | Los proyectos gratuitos se pausan a la semana de inactividad; mientras se desarrolla no molesta | Sí |
+| D13 | **Tailwind 3.4 en lugar de 4** | T04 | La version 4 depende de un binario nativo (lightningcss) que puede no arrancar en la CPU de la maquina de desarrollo | Sí |
+| D14 | Codigo de la v1 conservado en `legacy/` | T04 | Sirve de referencia para comparar y no estorba el desarrollo nuevo | Sí |
+| D15 | Configuracion de tests separada de la de Vite | T04 | Vitest arrastra su propia copia de Vite y los tipos de plugins chocaban | Sí |
+| D16 | Las tres opciones del asistente de Supabase marcadas | T04 | La RLS automatica evita que una tabla nueva quede abierta por olvido | Sí |

@@ -1,0 +1,30 @@
+# Dependencias
+node_modules/
+
+# Build
+dist/
+build/
+.svelte-kit/
+
+# Variables de entorno (NUNCA subir)
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Supabase
+.supabase/
+
+# Tests
+coverage/
+
+# Editor y sistema
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*

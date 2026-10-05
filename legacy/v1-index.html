@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>Presupuestos</h1>
+
+        <form id="form-prod">
+            <label for="nombre">Nombre del producto:</label>
+            <input type="text" id="nombre" placeholder="Ej: Torta de chocolate" required>
+
+            <label for="imagen">Imagen del producto (opcional):</label>
+            <input type="file" id="imagen" accept="image/*">
+
+            <label for="costo">Costo en $UYU:</label>
+            <input type="number" id="costo" step="any" placeholder="Costo por unidad" required>
+
+            <label for="precio">Precio de venta en $UYU:</label>
+            <input type="number" id="precio" step="any" placeholder="Precio por unidad">
+
+            <label for="ganancia-deseada">Ganancia deseada en %:</label>
+            <input type="number" id="ganancia-deseada" placeholder="Ganancia deseada en este producto">
+
+            <div id="ingredientes-usados">
+                <h3>Ingredientes del producto</h3>
+                <button type="button" id="agregar-ingrediente-uso">+ Agregar del inventario</button>
+                <div id="lista-ingredientes-uso"></div>
+                <p><strong>Costo total de ingredientes:</strong> $<span id="costo-ingredientes">0.00</span></p>
+            </div>
+
+            <button class="btn" type="submit">Guardar</button>
+        </form>
+        
+        <form id="form-ing">
+            <label for="ing-nombre">Nombre del ingrediente:</label>
+            <input type="text" id="ing-nombre" placeholder="Ej: Harina" required>
+
+            <label for="ing-cantidad">Cantidad total:</label>
+            <input type="number" id="ing-cantidad" placeholder="Cantidad" step="any" required>
+
+            <label for="ing-unidad">Unidad:</label>
+            <select id="ing-unidad" required>
+                <optgroup label="Peso">
+                    <option value="g">Gramos (g)</option>
+                    <option value="kg">Kilogramos (kg)</option>
+                </optgroup>
+                <optgroup label="Volumen">
+                    <option value="ml">Mililitros (ml / cc)</option>
+                    <option value="cl">Centilitros (cl)</option>
+                    <option value="l">Litros (l)</option>
+                </optgroup>
+                <optgroup label="Unidades">
+                    <option value="unidad">Unidad</option>
+                    <option value="paquete">Paquete</option>
+                </optgroup>
+            </select>
+
+            <div id="grupo-paquete" style="display:none">
+                <label for="ing-contenido">Contenido del paquete:</label>
+                <input type="number" id="ing-contenido" placeholder="Unidades /Peso del paquete">
+
+                <label for="ing-contenido-unidad">Unidad del contenido:</label>
+                <select id="ing-contenido-unidad">
+                    <option value="g">g</option>
+                    <option value="kg">kg</option>
+                    <option value="l">l</option>
+                    <option value="cl">cl</option>
+                    <option value="ml">ml / cc</option>
+                    <option value="unidad">unidad</option>
+                </select>
+            </div>
+
+            <label for="ing-precio">Costo al por mayor:</label>
+            <input type="number" id="ing-precio" placeholder="Costo total del ingrediente al por mayor" required>
+
+            <label for="ing-imagen">Imagen del ingrediente (opcional)</label>
+            <input type="file" id="ing-imagen" accept="image/*">
+
+            <button class="btn-3" type="submit">Guardar ingrediente</button>
+        </form>
+
+
+        <div class="tabla-scroll">
+            <table id="tabla-prod">
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Costo</th>
+                        <th>Precio</th>
+                        <th>Ganancia neto</th>
+                        <th>Porcentaje de ganancia</th>
+                        <th>Ingredientes</th>
+                        <th>Imagen</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div>
+
+        <div class="tabla-scroll">
+            <table id="tabla-ing">
+                <thead>
+                    <tr>
+                        <th>Ingrediente</th>
+                        <th>Cantidad total</th>
+                        <th>Unidad</th>
+                        <th>Precio total</th>
+                        <th>Precio unitario</th>
+                        <th>Imagen</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+
+
+        </div>
+        <div class="total">Ganancia total: $UYU <span id="ganancia-total">0</span></div>
+
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+
+</html>
