@@ -17,8 +17,8 @@ export interface Insumo {
   unidad: CodigoUnidad;
   cantidadComprada: number;
   precioLote: number;
-  contenidoPaquete?: number;
-  unidadContenido?: CodigoUnidad;
+  contenidoPaquete?: number | null;
+  unidadContenido?: CodigoUnidad | null;
   costoActual?: number | null;
   activo?: boolean;
 }

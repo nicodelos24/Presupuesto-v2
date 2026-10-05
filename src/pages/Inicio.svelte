@@ -1,9 +1,13 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { CircleCheck, CircleAlert, Package } from "lucide-svelte";
+  import { CircleCheck, CircleAlert, TrendingUp, Package } from "lucide-svelte";
   import Tarjeta from "../components/Tarjeta.svelte";
   import EstadoVacio from "../components/EstadoVacio.svelte";
-  import { costearReceta, margenDesdePrecio, precioDesdeMargen } from "../lib/costing";
+  import {
+    costearReceta,
+    margenDesdePrecio,
+    precioDesdeMargen,
+  } from "../lib/costing";
   import type { Insumo } from "../lib/tipos";
   import { conexionConfigurada, supabase } from "../lib/supabase";
 
@@ -39,6 +43,7 @@
   const margen = 60;
   const precio = precioDesdeMargen(costeo.costoTotal, margen);
   const porcentaje = margenDesdePrecio(precio, costeo.costoTotal);
+  const ganancia = precio - costeo.costoTotal;
 
   let sesionIniciada = $state(false);
   let correo = $state<string | null>(null);
@@ -62,42 +67,67 @@
 </script>
 
 <div class="space-y-5">
-  <header>
-    <h1 class="text-2xl font-semibold tracking-tight text-ink-900">
-      Resumen del dia
-    </h1>
-    <p class="mt-1 text-sm text-ink-500">
-      Todo lo que hay que producir y entregar hoy, en un solo lugar.
+  <section class="encabezado-hero">
+    <p class="text-xs font-semibold uppercase tracking-[0.18em] text-white/60">
+      Martes, hoy
     </p>
-  </header>
+    <h1 class="mt-1.5 text-2xl font-semibold tracking-tight">
+      Que hay que hacer hoy
+    </h1>
+    <p class="mt-1.5 max-w-sm text-sm text-white/70">
+      Todo lo que hay que producir y entregar, en un solo lugar.
+    </p>
+
+    <dl class="mt-5 grid grid-cols-3 gap-2.5">
+      <div class="rounded-2xl bg-white/12 p-3 backdrop-blur-sm">
+        <dt class="text-[11px] font-medium text-white/60">Pedidos</dt>
+        <dd class="numeros mt-0.5 text-2xl font-semibold">0</dd>
+      </div>
+      <div class="rounded-2xl bg-white/12 p-3 backdrop-blur-sm">
+        <dt class="text-[11px] font-medium text-white/60">Entregas</dt>
+        <dd class="numeros mt-0.5 text-2xl font-semibold">0</dd>
+      </div>
+      <div class="rounded-2xl bg-white/12 p-3 backdrop-blur-sm">
+        <dt class="text-[11px] font-medium text-white/60">A cobrar</dt>
+        <dd class="numeros mt-0.5 text-2xl font-semibold">$0</dd>
+      </div>
+    </dl>
+  </section>
 
   <Tarjeta titulo="Estado del sistema">
     {#if cargando}
-      <p class="text-sm text-ink-400">Consultando la base de datos...</p>
+      <div class="space-y-2.5">
+        <div class="esqueleto h-4 w-40"></div>
+        <div class="esqueleto h-4 w-56"></div>
+      </div>
     {:else}
       <ul class="space-y-2.5 text-sm">
         <li class="flex items-center justify-between gap-3">
           <span class="text-ink-500">Base de datos</span>
-          <span class="flex items-center gap-1.5 font-medium">
+          <span
+            class="pastilla {conexionConfigurada
+              ? 'bg-accent-50 text-accent-700'
+              : 'bg-amber-50 text-amber-700'}"
+          >
             {#if conexionConfigurada}
-              <CircleCheck size={16} class="text-emerald-600" />
-              Conectada
+              <CircleCheck size={14} /> Conectada
             {:else}
-              <CircleAlert size={16} class="text-amber-600" />
-              Falta configurar .env
+              <CircleAlert size={14} /> Falta el .env
             {/if}
           </span>
         </li>
 
         <li class="flex items-center justify-between gap-3">
           <span class="text-ink-500">Sesion</span>
-          <span class="flex items-center gap-1.5 font-medium">
+          <span
+            class="pastilla {sesionIniciada
+              ? 'bg-accent-50 text-accent-700'
+              : 'bg-amber-50 text-amber-700'}"
+          >
             {#if sesionIniciada}
-              <CircleCheck size={16} class="text-emerald-600" />
-              {correo}
+              <CircleCheck size={14} /> {correo}
             {:else}
-              <CircleAlert size={16} class="text-amber-600" />
-              Sin iniciar sesion
+              <CircleAlert size={14} /> Sin iniciar sesion
             {/if}
           </span>
         </li>
@@ -105,50 +135,53 @@
     {/if}
   </Tarjeta>
 
-  <Tarjeta titulo="Para hoy">
-    <EstadoVacio
-      titulo="Aun no hay pedidos para hoy"
-      descripcion="Cuando cargues pedidos van a aparecer aqui los que hay que producir y los que hay que entregar."
-    >
-      {#snippet icono()}
-        <Package size={32} strokeWidth={1.5} />
-      {/snippet}
-    </EstadoVacio>
-  </Tarjeta>
-
   <Tarjeta titulo="Ejemplo de costeo real">
     <ul class="space-y-1.5 text-sm">
       {#each costeo.detalles as detalle (detalle.insumoId)}
-        <li class="flex justify-between gap-4">
-          <span class="text-ink-600">
+        <li class="vineta">
+          <span class="text-ink-700">
             {detalle.nombre}
             <span class="text-ink-400">
               {detalle.cantidadPedida}
               {detalle.unidadPedida}
             </span>
           </span>
-          <span class="font-medium tabular-nums">
+          <span class="numeros ml-auto font-semibold">
             {money.format(detalle.costo)}
           </span>
         </li>
       {/each}
     </ul>
 
-    <dl class="mt-3 space-y-1.5 border-t border-ink-100 pt-3 text-sm">
-      <div class="flex justify-between">
+    <dl class="mt-4 space-y-2 border-t border-ink-100 pt-4 text-sm">
+      <div class="flex items-center justify-between">
         <dt class="text-ink-500">Costo total</dt>
-        <dd class="font-semibold tabular-nums">
-          {money.format(costeo.costoTotal)}
-        </dd>
+        <dd class="numeros font-semibold">{money.format(costeo.costoTotal)}</dd>
       </div>
-      <div class="flex justify-between">
+      <div class="flex items-center justify-between">
         <dt class="text-ink-500">Precio con {margen}% de ganancia</dt>
-        <dd class="font-semibold tabular-nums">{money.format(precio)}</dd>
+        <dd class="numeros font-semibold">{money.format(precio)}</dd>
       </div>
-      <div class="flex justify-between text-ink-400">
-        <dt>Margen sobre el costo</dt>
-        <dd class="tabular-nums">{porcentaje?.toFixed(1)}%</dd>
+      <div
+        class="flex items-center justify-between rounded-xl bg-acento-gradiente px-3 py-2.5 text-white"
+      >
+        <dt class="flex items-center gap-1.5 font-medium">
+          <TrendingUp size={16} /> Ganancia por unidad
+        </dt>
+        <dd class="numeros text-right font-semibold">
+          {money.format(ganancia)}
+          <span class="ml-1 text-white/70">({porcentaje?.toFixed(0)}%)</span>
+        </dd>
       </div>
     </dl>
   </Tarjeta>
+
+  <EstadoVacio
+    titulo="Aun no hay pedidos para hoy"
+    descripcion="Cuando cargues pedidos van a aparecer aqui los que hay que producir y los que hay que entregar."
+  >
+    {#snippet icono()}
+      <Package size={26} strokeWidth={1.6} />
+    {/snippet}
+  </EstadoVacio>
 </div>
