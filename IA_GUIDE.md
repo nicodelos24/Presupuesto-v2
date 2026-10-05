@@ -29,7 +29,8 @@ decisiones y cambios.
 | [T04b](#t04b--base-de-datos-en-supabase-y-fase-1-inicio) | Base de datos aplicada y verificada, inicio de Fase 1 | Completada |
 | [T05](#t05-fase-1--diseño-y-navegación) | Fase 1: diseño y navegación | Completada |
 | [T06](#t06-plan-funcional-del-sistema) | Plan funcional del sistema | Completada |
-| [T07](#t07-fase-2--cuentas-y-negocios) | Fase 2: cuentas y negocios | Pendiente |
+| [T07](#t07-ampliacion-del-plan-proveedores-stock-recetas-de-recetas-y-avisos) | Ampliación del plan y modelo de datos | Completada |
+| [T08](#t08-fase-2--cuentas-y-negocios) | Fase 2: cuentas y negocios | Pendiente |
 | [T07](#t07-fase-3--inventario-y-costos) | Fase 3: inventario y costos reales | Pendiente |
 | [T08](#t08-fase-4--clientes-y-pedidos) | Fase 4: clientes y pedidos | Pendiente |
 | [T09](#t09-fase-5--agenda-y-entregas) | Fase 5: agenda y entregas | Pendiente |
@@ -762,6 +763,104 @@ Pendiente.
 
 Registro e inicio de sesión, recuperación de contraseña, onboarding del negocio, invitación de
 empleados, Row Level Security probada e importación de datos desde la v1.
+
+---
+
+## T07 · Ampliacion del plan: proveedores, stock, recetas de recetas y avisos
+
+### Prompt textual
+
+> "Bien, algo mas que podemos agregar al plan es que ademas de tener un inventario de productos y
+> recetario, tambien se pueda agendar en el calendario cuando van a llegar los pedidos de proveedores en
+> el caso de un restaurant, entonces se va a poder calcular si va a faltar algo en algun pedido para tal
+> fecha, eso tendria bastante sentido, y que ademas en el inventario se pueda agregar cosas para ir
+> teniendo el inventario actualizado, y lo mismo para el recetario, por ejemplo si un restaurante quiere
+> tener varios platos ya preparados como tortillas, spagettis congelados ya hechos, salsas, etc, esas
+> cosas se guardarian por catidad en las recetas, asi una vez que se hayan hecho varias recetas, los
+> ingredientes deberian restarse automaticamente del inventario, de esta forma todo tendria congruencia
+> y sentido, si ves baches en mi plan podrias corregirme, acosnejarme y asesorarme sobre la organizacion?
+> Una vez tengamos la idea ya hecha me gustaria poder agregar una parte de graficas para ver las ganancias,
+> pedidas, clientes, etc, quiza que lleguen notificaciones de cuando van a haber pedidos proximos, reparto
+> de proveedores, o cualquier cosa agendada, hasta cuando el inventario se este agotando algo incluso, o
+> hasta algun recordatorio de que se debe actualizar el inventario por si acaso a alguna hora programada,
+> todo esto ultimo no se se si se puede implementar, pero quiero que vayas teniendo estas ideas en el
+> plan asi podemos hacer un buen proyecto profesional cotizable que sirva para negocios, me ayudas a
+> continuar entonces?"
+
+### Estado
+
+Completada (planificacion y esquema de datos). La implementacion queda para las fases siguientes.
+
+### Baches encontrados en el plan y como se corrigieron
+
+Las ideas del usuario son correctas y valientes. Al juntarlas aparecieron cinco problemas que habria
+costado mucho corregir mas tarde:
+
+| Bache | Por que es grave | Correccion |
+|---|---|---|
+| El stock se guardaba como "cantidad comprada" | Con compras, produccion, mermas y conteos, un numero guardado deja de ser cierto | El stock pasa a ser la **suma de movimientos** (libro contable) y **nunca se edita a mano** |
+| Las recetas de recetas no se podian expresar | Habia dos tablas separadas (`insumos` y `productos`) con logica duplicada; un preparado que se vende y se usa en otra receta no cabe en ninguna | Se **unifica en una tabla `articulos`** con banderas (`es_vendible`, `es_elaborado`) |
+| No estaba contemplado el **rendimiento ni la merma** | Elaborar 500 g de arroz rinde 400 g cocidos; sin esto el costo sale bajo y el dueño vende creyendo que gana cuando no | Se agregan `rendimiento_cantidad`, `rendimiento_unidad` y `merma_pct` a cada receta |
+| La llegada prevista de proveedor se confundia con stock | Prometeria mercaderia que no llego: el error mas caro posible | Tabla `llegadas_previstas` separada, que **no** suma stock, y proyeccion que las usa como estimacion |
+| Faltaba el **conteo fisico** | Sin el, en tres meses el stock deja de cuadrar y el local abandona la app | Tabla de movimientos tipo `ajuste_conteo` con registro de quien ajusto y cuando |
+
+Ademas se detectaron dos problemas tecnicos de implementacion: el **ciclo de recetas** (una salsa que
+contiene una tortilla que contiene la misma salsa) y el **doble descuento** de insumos al elaborar y
+al vender. Ambos quedaron documentados con su regla de resolucion.
+
+### Lo que se entrego
+
+1. **`MODELO_DATOS.md`**: el modelo completo, con las correcciones explicadas y el porque de cada una.
+2. **`supabase/migrations/0002_articulos_y_movimientos.sql`**: rehace el esquema con `articulos`,
+   `movimientos`, `llegadas_previstas`, `producciones`, `gastos` y las politicas de seguridad.
+3. **`supabase/verificar_0002.sql`**: consultas para comprobar que quedo bien aplicado.
+4. **`PLAN_FUNCIONAL.md`** seccion 11: los modulos nuevos y la advertencia sobre el calendario.
+
+### Detalles tecnicos que quedaron documentados
+
+| Decision tecnica | Como quedo resuelto |
+|---|---|
+| Valorar el stock | **Costo promedio ponderado**, recalculado solo en compras. Se descarto FIFO por complejidad para un negocio chico. |
+| A que hora empieza el dia del negocio | Campo `hora_corte_dia` (4:00 por defecto) para panaderias que producen de noche |
+| Aviso de stock bajo | Campo `stock_minimo` por articulo, con activador por negocio |
+| Recordatorio de conteo | `aviso_conteo_dia` (dia del mes) y `hora_resumen_correo` (7:00 por defecto) |
+| Notificaciones | Avisos dentro de la app y correo diario. El push del navegador se agrega al final, con la salvedad de que en iPhone exige instalar la app en la pantalla de inicio. SMS descartado por costo. |
+| Graficas | Siete graficas definidas, cada una respondiendo una pregunta concreta. Se descartaron las que no responden nada |
+
+### Funcionalidades que se agregaron al plan por sugerencia propia
+
+| Agregado | Por que |
+|---|---|
+| **Lista para comprar al proveedor** | Se genera sola con los faltantes. Es lo que mas va a usar el dueño. |
+| **Comanda de produccion** | Por pedido, que preparar y en que orden. Se imprime y va a la cocina. |
+| **Historial de precio de insumos** | Para detectar que subio un insumo y los productos mantienen el precio viejo, y el margen se esta comiendo solo. |
+| **Corte del dia configurable** | Una panaderia produce de noche; sin esto los pedidos de la madrugada caen en el dia anterior. |
+
+### Orden de construccion revisado
+
+| # | Modulo |
+|---|---|
+| 1 | Articulos unificados y libro de movimientos |
+| 2 | Recetario con costo en vivo y rendimiento |
+| 3 | Cuentas de usuario y persistencia real |
+| 4 | Agenda: produccion agendada, llegadas previstas y faltantes |
+| 5 | Inventario: conteos, ajustes y minimos |
+| 6 | Pedidos y clientes con costo congelado |
+| 7 | Listas para imprimir (compras y comanda) |
+| 8 | Gastos y resultado mensual |
+| 9 | Avisos en la app y correo diario |
+| 10 | Graficas y notificaciones push |
+
+### Nota sobre la reescritura del esquema
+
+La migracion 0002 **borra y rehace** varias tablas de la 0001. Es seguro porque el proyecto esta en
+desarrollo y no hay datos reales todavia. Se hizo a proposito: cambiar el modelo con datos en
+produccion seria mucho mas caro que rehacerlo ahora.
+
+### Estado de la base
+
+La migracion 0002 **todavia no fue aplicada**. El usuario debe correrla en el panel de Supabase y luego
+verificar con `supabase/verificar_0002.sql`, una consulta a la vez.
 
 ---
 

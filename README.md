@@ -7,6 +7,8 @@
 >
 > - [PLAN_FUNCIONAL.md](PLAN_FUNCIONAL.md) — cómo debe funcionar cada pantalla, el calendario de
 >   producción, los pedidos, los gastos y el manejo de fotos.
+> - [MODELO_DATOS.md](MODELO_DATOS.md) — stock por movimientos, costo promedio, recetas de recetas,
+>   rendimiento y merma, llegadas de proveedores y avisos.
 > - [ROADMAP.md](ROADMAP.md) — visión, arquitectura y hoja de ruta por fases.
 > - [IA_GUIDE.md](IA_GUIDE.md) — bitácora de pedidos, decisiones y cambios.
 > - [DOCUMENTACION.md](DOCUMENTACION.md) — análisis técnico de la base heredada y sus problemas.

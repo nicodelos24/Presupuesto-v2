@@ -276,3 +276,27 @@ tecnicos. Por eso el orden propuesto mete las cuentas antes de pedidos y entrega
 
 La foto va en Insumo y en Producto. El calendario es el punto donde el negocio se planifica; los
 pedidos son donde se reality; los gastos son donde se cierra la cuenta.
+
+---
+
+## 11. Modulos agregados a partir de las ideas del usuario
+
+Incorporados despues de definir el calendario de produccion. El detalle tecnico de cada uno esta en
+[MODELO_DATOS.md](MODELO_DATOS.md).
+
+| Modulo | Que resuelve | Documentado en |
+|---|---|---|
+| **Llegadas de proveedores** | Saber que llega, cuando y si alcanza para los pedidos de la semana | MODELO_DATOS 3 |
+| **Stock por movimientos** | Que el inventario se actualice solo al comprar y al producir | MODELO_DATOS 1 |
+| **Recetas de recetas** | Productos preparados (tortillas, salsas) que se venden y se usan en otras recetas | MODELO_DATOS 2 |
+| **Conteos y ajustes** | Que los numeros sean confiables | MODELO_DATOS 4 |
+| **Avisos y recordatorios** | Pedidos proximos, faltantes, stock bajo, conteo mensual | MODELO_DATOS 6 |
+| **Graficas** | Resultado del mes, productos y clientes | MODELO_DATOS 7 |
+| **Listas para imprimir** | Compras al proveedor y comanda de produccion | MODELO_DATOS 8 |
+
+### Advertencia importante sobre el calendario
+
+Marcar una llegada de proveedor **no** suma stock. Es una expectativa, no mercaderia en deposito. Si se
+sumara, el sistema mostraria inventario que el local no tiene y terminaria prometiendo lo que no puede
+entregar. La proyeccion distingue las tres cosas: compra realizada, llegada prevista y mercaderia
+recibida.
