@@ -24,6 +24,7 @@ decisiones y cambios.
 | [T01](#t01-commit-y-push-de-la-documentación) | Commit y push de la documentación | Completada |
 | [T02](#t02-migración-a-presupuesto-v2) | Migración del repo a Presupuesto-v2 | Completada |
 | [T03](#t03-plan-de-producto-v2) | Plan de producto v2 (visión, roadmap, este registro) | Completada |
+| [T03c](#t03c--confirmación-del-stack-y-modelo-de-cobro) | Confirmación de stack, costos reales y modelo de cobro | Completada |
 | [T04](#t04-fase-0--cimientos) | Fase 0: cimientos del proyecto | Pendiente |
 | [T05](#t05-fase-1--diseño-y-navegación) | Fase 1: diseño y navegación | Pendiente |
 | [T06](#t06-fase-2--cuentas-y-negocios) | Fase 2: cuentas y negocios | Pendiente |
@@ -210,6 +211,83 @@ Quedan abiertas en `ROADMAP.md` sección 9:
 
 ---
 
+## T03c · Confirmación del stack y modelo de cobro
+
+### Prompts textuales
+
+> "Me podrías explicar que es supabase? Es gratis para implementarlo? Ya que mi problema actual es
+> que no tengo dinero para hostear la página, por ahora la hice en github pages"
+
+> "Perfecto, esta idea me encanta porque puedo crear la aplicación y si algún dia algún cliente
+> quiere comprar mi servicio puedo activar el plan pro cobrandole alguna cuota mensual para el
+> mantenimiento de su página no? Me encantó esa idea, me ayudas con supabase entonces? Me gustaría
+> buscar también una opción distinta a github pages ya que el problema es que debo dejar el código
+> publico, pero por ahora centrémonos en lo que falta para comenzar, decime qué hago con lo de
+> supabase asi continuamos, si precise instalar algo hazlo"
+
+### Estado
+
+Completada.
+
+### Respuesta a la duda de fondo
+
+Sí: **se cobra una cuota mensual por mantenimiento**, y el modelo queda así:
+
+1. El desarrollo se hace en un proyecto de Supabase **gratuito**, sin costo.
+2. Cuando un cliente contrata, se crea **un proyecto de Supabase nuevo para su negocio**, en plan Pro
+   (25 USD/mes), y se le entrega el acceso.
+3. La cuota del cliente **cubre ese plan** más el mantenimiento y las mejoras.
+4. El cliente es dueño de sus datos y puede exportarlos cuando quiera.
+
+Supabase no cobra por usuario de la base sino por proyecto, así que un solo plan Pro alcanza para
+varios negocios. Con 4 o 5 clientes el costo de infraestructura del servicio es de unos 25 a 125 USD
+al mes, y el resto es trabajo del desarrollador.
+
+### Alternativa a GitHub Pages
+
+GitHub Pages obliga a que el repositorio sea público. Se eligió **Cloudflare Pages**, que acepta
+repositorios privados en plan gratuito y no pone límite de ancho de banda. Así el código del
+producto que se vende puede quedar privado desde el primer día.
+
+### Verificación del entorno de desarrollo
+
+Se comprobó la máquina de desarrollo antes de comprometer la stack:
+
+| Herramienta | Resultado |
+|---|---|
+| Node 20.19.2, npm 9.2.0 | Funcionan |
+| esbuild 0.28.2 (motor de Vite) | **Funciona** en esta CPU |
+| Supabase CLI | **No arranca**: `Illegal instruction` |
+| Docker | No instalado |
+
+El equipo tiene un Intel Atom N450 de 2010, sin instrucciones modernas de CPU. El Supabase CLI está
+compilado con instrucciones que ese procesador no soporta, así que **queda descartado** y las
+migraciones se aplicarán desde el editor SQL del panel web de Supabase, versionando los archivos
+`.sql` en el repositorio. El resto del toolchain (Vite, Svelte, Tailwind, Vitest) funciona con
+normalidad, y el build de producción ocurre igual en la nube.
+
+### Agregado
+
+- `ROADMAP.md` 4.6: hosting con repositorio privado.
+- `ROADMAP.md` 4.7: modelo de un proyecto de Supabase por cliente y modelo comercial.
+- `ROADMAP.md` 4.8: costos reales de operación, con los precios públicos verificados.
+- `ROADMAP.md` 4.9: restricciones del equipo de desarrollo y qué herramientas evitar.
+- Tabla de decisiones D08 a D12.
+
+### Cambiado
+
+- La decisión de datos dejó de ser recomendación y pasó a estar **confirmada**.
+- El despliegue dejó de ser GitHub Pages y pasó a Cloudflare Pages.
+- La lista de decisiones pendientes se redujo: las de proveedor de datos y de hosting quedan
+  resueltas.
+
+### Advertencia registrada
+
+Los proyectos gratuitos de Supabase **se pausan a la semana de inactividad**. Mientras se desarrolla
+no molesta, pero un cliente real necesita su proyecto en plan Pro o arriesga perder el acceso.
+
+---
+
 ## T04 · Fase 0: cimientos
 
 ### Prompt textual
@@ -331,3 +409,8 @@ Tabla maestra. Si una decisión cambia, se agrega una fila nueva en lugar de ree
 | D05 | Identificadores por `id`, nunca por nombre | T03 | Los nombres colisionan y rompen ediciones y borrados | No |
 | D06 | Costo actual calculado vs. costo histórico congelado | T03 | Un pedido viejo debe seguir cuadrando aunque cambien los costos | No (es el modelo de datos) |
 | D07 | Identificadores de fecha locales, no UTC | T03 | Un pedido del viernes no debe saltar de día al convertir | Sí |
+| D08 | **Supabase confirmado por el usuario** | T03c | El usuario confirmo que puede con el plan gratuito y que no tiene presupuesto de hosting propio | No |
+| D09 | **Cloudflare Pages** en lugar de GitHub Pages | T03c | GitHub Pages obliga a publicar el código; Cloudflare permite repositorio privado en plan gratuito y sin límite de ancho de banda | Sí (cambiar de hosting es una variable de entorno) |
+| D10 | **Un proyecto de Supabase por cliente** | T03c | Permite cobrar la cuota mensual, aislar datos y dar de baja un cliente sin riesgo | No una vez que haya clientes |
+| D11 | **No usar el Supabase CLI** | T03c | El binario no arranca en la CPU de la máquina de desarrollo (Intel Atom N450). Las migraciones se aplican desde el editor SQL del panel web | Sí |
+| D12 | Deploy en plan Pro recién cuando hay cliente | T03c | Los proyectos gratuitos se pausan a la semana de inactividad; mientras se desarrolla no molesta | Sí |

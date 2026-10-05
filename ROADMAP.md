@@ -98,8 +98,8 @@ funcionalidades pensadas para retail y no para producción artesanal. Acá la pr
 
 ## 3. Principios de diseño
 
-Estos principios mandan sobre cualquier decisión puntual. Cuando haya un conflicto entre una功能的
-funcionalidad nueva y uno de estos principios, gana el principio.
+Estos principios mandan sobre cualquier decisión puntual. Cuando una funcionalidad nueva entre en
+conflicto con uno de ellos, gana el principio.
 
 1. **Móvil primero.** La app se usa de pie, con una mano, a veces con las manos ocupadas. Diseño
    para pantallas de 360 a 430 px de ancho. El escritorio es la adaptación, no el diseño base.
@@ -129,12 +129,12 @@ Cambiar la capa de datos más adelante es un proyecto entero.
 
 | Capa | Elección | Motivo |
 |---|---|---|
-| **Datos + Auth** | **Supabase** (Postgres + Auth + Storage) | Resuelve multi-cuenta, aislamiento por negocio, imágenes y backups sin mantener servidores.免费 tier suficiente para empezar a vender. |
+| **Datos + Auth** | **Supabase** (Postgres + Auth + Storage) | Resuelve multi-cuenta, aislamiento por negocio, imágenes y backups sin mantener servidores. El plan gratuito alcanza para empezar a vender. |
 | **Frontend** | **Vite + TypeScript + Svelte 5** | Componentes reales, tipado para los cálculos, build optimizado, y un solo concepto mental en vez de la mezcla de vanilla + jQuery mental de la v1. |
 | **Estilos** | **Tailwind CSS** + tokens propios de diseño | Consistencia visual rápida y un sistema de diseño documentado y extensible. |
 | **Iconos** | **Lucide** | Un set coherente, nada de emojis como botones (la v1 usa ✏️ 🗑️ ❌). |
 | **Calendario** | **FullCalendar** o calendario propio | Ver 4.3. |
-| **Despliegue** | **Vercel / Netlify** (frontend) + **Supabase** (datos) | Despliegue automático desde el repo, sin servidores propios. |
+| **Despliegue** | **Cloudflare Pages** (frontend, gratis, repo privado) + **Supabase** (datos) | Despliegue automático desde un repositorio **privado**, sin servidores propios ni límite de ancho de banda. Ver 4.6. |
 | **Pagos (futuro)** | Stripe / Mercado Pago | Fase posterior a la validación con clientes reales. |
 
 ### 4.2 Por qué Supabase y no otras opciones
@@ -142,7 +142,7 @@ Cambiar la capa de datos más adelante es un proyecto entero.
 | Opción | Ventajas | Problemas |
 |---|---|---|
 | **Supabase** (recomendado) | Auth lista, Postgres real, **Row Level Security** para aislar locales, Storage para imágenes, dashboard, plan gratuito. | Base de datos relacional: hay que aprender SQL y las reglas de RLS son sutiles. |
-| **Firebase** | Muy simple de empezar, sync en tiempo real. | Modelo de documentos: consultas relacionales (pedidos con cliente + líneas) son frágiles y caras. Cambiar después es muy painful. |
+| **Firebase** | Muy simple de empezar, sync en tiempo real. | Modelo de documentos: consultas relacionales (pedidos con cliente + líneas) son frágiles y caras. Cambiar después es muy costoso. |
 | **Node + Postgres propio** | Control total. | Hay que mantener servidores, backups, TLS, monitoreo. Un desarrollador solo no debería. |
 | **Solo localStorage** (v1) | Cero costo, cero mantenimiento. | No hay cuentas, no hay datos compartidos, no hay venta posible. Descartado. |
 
@@ -182,6 +182,89 @@ en silencio). En v2 van a **Supabase Storage**, con:
 
 Lo que **no** se conserva: el almacenamiento en `localStorage`, el `innerHTML` con datos de usuario,
 el modelo de datos basado en arrays y los `alert()` como única validación.
+
+### 4.6 Hosting con repositorio privado
+
+GitHub Pages exige que el repositorio sea **público**, y eso no sirve: el código de un producto que se
+vende es la parte que menos se quiere exponer.
+
+| Opción | Repo privado en plan gratuito | Notas |
+|---|---|---|
+| **Cloudflare Pages** (recomendada) | Sí | Sin límite de ancho de banda, se conecta al repo por GitHub, certificado automático, despliegue en cada push. |
+| Netlify | Sí | Límite de 100 GB/mes de ancho de banda. |
+| Vercel | Sí | Suficiente, pero con límites más estrictos en el plan gratuito. |
+
+Se adopta **Cloudflare Pages**. Con esto el repositorio puede ser privado desde el primer día.
+
+> Importante: con el código privado hay que corregir la URL del sitio y usar el dominio propio. El
+> dominio comprado (unos 10 USD al año) se conecta al proyecto de Cloudflare cuando exista.
+
+### 4.7 Un proyecto de Supabase por cliente
+
+Es la decisión que hace posible cobrar una cuota mensual. Se creó la aplicación para vender el
+**mantimiento**, no el código.
+
+| Modelo | Cómo funciona | Ventaja | Problema |
+|---|---|---|---|
+| **Un proyecto por cliente** (recomendado) | Cada negocio que paga tiene su propio proyecto de Supabase y su propia URL | Aislamiento total, se le puede entregar o revender, se puede suspender o borrar sin tocar los demás, migrar es trivial | Hay que actualizar el proyecto cuando sale una versión nueva |
+| **Un proyecto compartido** con `store_id` | Todos los clientes en una sola base | Más simple de actualizar | Una RLS mal escrita filtra datos entre clientes; no se puede dar de baja a uno sin riesgo |
+
+**Modelo comercial resultante:**
+
+1. El desarrollo ocurre en un proyecto de **desarrollo**, en plan gratuito.
+2. Cuando un cliente contrata, se crea un **proyecto de Supabase nuevo** para su negocio, en plan
+   Pro (25 USD/mes), y se le entrega el acceso.
+3. La cuota que se le cobra al cliente **cubre ese plan** más el mantenimiento y las mejoras.
+4. El cliente es dueño de sus datos: puede exportar todo en CSV o JSON cuando quiera.
+
+Un solo proyecto Pro alcanza para dar de alta varios negocios: Supabase no cobra por usuario de la
+base, sino por proyecto. Con 3 o 4 clientes el costo real del servicio es de unos 25 a 100 USD por
+mes, y el resto es tu trabajo.
+
+### 4.8 Costos reales de operación
+
+Con los precios públicos de Supabase (verificado en su página de precios):
+
+| Concepto | Plan gratuito | Plan Pro |
+|---|---|---|
+| Precio | **0 USD** | **25 USD/mes por proyecto** |
+| Tamaño de base | 500 MB | 8 GB (luego 0,125 USD/GB) |
+| Archivos | 1 GB | 100 GB |
+| Usuarios activos | 50.000 | 100.000 |
+| Salida de datos | 5 GB/mes | 250 GB/mes |
+| Backups | No | Diarios, 7 días |
+| **Pausa por inactividad** | **Sí, a la semana** | No |
+
+**Advertencia operativa:** los proyectos gratuitos **se pausan a la semana de inactividad**. Mientras
+se desarrolla no molesta (se activa con un clic). Pero en cuanto un cliente real use el servicio, su
+proyecto tiene que estar en plan Pro, porque si se pausa un negocio pierde el acceso a sus datos.
+
+**Presupuesto del proyecto:**
+
+| Fase | Costo |
+|---|---|
+| Desarrollo (Fases 0 a 5) | **0 USD** |
+| Primer cliente | 25 USD/mes (el plan Pro de su proyecto) |
+| Hosting del frontend | **0 USD** (Cloudflare Pages) |
+| Dominio propio | ~10 USD/año (opcional, se puede usar el subdominio gratis) |
+
+Es decir: **se puede construir y operar el primer cliente sin gastar un peso**, y recién cuando
+aparezcan ingresos se paga la infraestructura del cliente, no la del desarrollo.
+
+### 4.9 Restricción del equipo de desarrollo
+
+La máquina de desarrollo tiene un **Intel Atom N450 (2010)**, sin instrucciones modernas de CPU. Hay
+consecuencias concretas y ya verificadas:
+
+| Herramienta | Estado | Acción |
+|---|---|---|
+| **Supabase CLI** | No arranca (`Illegal instruction`) | **No se usa.** Las migraciones se aplican desde el editor SQL del panel web. Los archivos `.sql` se versionan en el repo para tener el historial. |
+| **Node 20, npm, esbuild, Vite** | Funcionan (esbuild 0.28.2 verificado) | Se pueden usar con normalidad. |
+| **Tests** | Funcionan (Node puro o Vitest) | Sin restricciones. |
+
+Regla derivada: **preferir herramientas que corran en Node puro** (Vitest, Playwright) y evitar
+binarios nativos modernos. El build de producción ocurre igual en la nube (Cloudflare), así que el
+equipo local solo necesita para desarrollo y tests.
 
 ---
 
@@ -374,19 +457,22 @@ Mapeo entre los problemas documentados en `DOCUMENTACION.md` y dónde se resuelv
 
 ## 9. Decisiones pendientes
 
-Temas a cerrar antes de arrancar la Fase 0. Ninguno bloquea la documentación.
+Temas a cerrar antes de arrancar la Fase 0.
 
-1. **¿Supabase o Firebase?** Recomendación: Supabase (razones en 4.2). La decisión debe ser firme
-   porque cambiar de proveedor de datos después es caro.
+1. ~~**¿Supabase o Firebase?**~~ **Resuelto: Supabase**, confirmado por el usuario (ver 4.2 y
+   registro de decisiones D01).
 2. **¿Nombre comercial y dominio?** Importa desde ya, porque define las URLs, el correo de
    recuperación de contraseña y el texto legal.
-3. **¿Precio?** Define los límites del plan gratuito. Necesita validación con locales reales.
+3. **¿Precio de la cuota mensual?** Define los límites del plan gratuito. Ya está definido el modelo
+   (4.7): un proyecto Pro por cliente. Falta el monto.
 4. **¿Pilotos?** ¿Hay 2 o 3 locales conocidos que puedan probar la Fase 3? Si sí, se testean antes
    de seguir construyendo.
 5. **¿Moneda y país configurables o fijos en UYU?** Hoy está fijo. Recomiendo moneda configurable
    desde la configuración del negocio, con UYU por defecto.
 6. **¿Nombre del producto en el código?** El paquete, el repositorio y las variables de entorno
    deberían llevar un nombre estable, distinto del nombre del negocio.
+7. **¿Cloudflare Pages?** Resuelto por rendimiento de opción (4.6). Pendiente solo crear la cuenta
+   al momento del despliegue.
 
 ---
 
