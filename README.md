@@ -1,2 +1,144 @@
-# Presupuesto-v2
- 
+# Proyecto Fer — Calculadora de presupuestos y costos
+
+Aplicación web de una sola página para calcular el **costo real de productos** (por ejemplo, recetas de
+pastelería o artesanía) a partir de un inventario de insumos, y definir su **precio de venta** en
+pesos uruguayos (UYU).
+
+- **Autor:** [nicodelos24](https://github.com/nicodelos24)
+- **Repositorio:** https://github.com/nicodelos24/Proyecto-Fer
+- **Licencia:** sin licencia declarada
+- **Stack:** HTML + CSS + JavaScript puro (vanilla). Sin frameworks, sin dependencias, sin build.
+
+---
+
+## 1. ¿Qué hace?
+
+El usuario carga dos tipos de datos y la aplicación cruza ambos:
+
+| Entrada | Dónde | Para qué sirve |
+|---|---|---|
+| **Ingredientes** (inventario) | Formulario *Guardar ingrediente* | Saber cuánto se paid por unidad real de cada insumo |
+| **Productos** | Formulario *Guardar* | Calcular cuánto le cuesta producirlo y a cuánto venderlo |
+
+### Flujo de uso típico
+
+1. **Cargar el inventario.** Se registra cada insumo con su cantidad comprada, su unidad y lo que se
+   pagó por el lote. Ej: `Harina — 25 kg — $1.200`. La app calcula sola el precio por kilo.
+2. **Cargar el producto.** Se elige uno o más ingredientes del inventario, se indica la cantidad usada
+   de cada uno, y la app suma el costo real de la receta, escribiéndolo en el campo *Costo en $UYU*.
+3. **Definir el precio de venta.** De dos maneras excluyentes:
+   - escribiendo el **precio** directamente, o
+   - escribiendo el **% de ganancia deseado**, y la app lo calcula como
+     `precio = costo + costo × %`.
+4. **Consultar resultados.** La tabla de productos muestra costo, precio, ganancia en pesos y
+   ganancia porcentual, más el detalle de ingredientes usados. Al pie se acumula la
+   **ganancia total** de todos los productos.
+
+Todo se guarda automáticamente en el navegador (`localStorage`). No hay servidor, no hay base de
+datos, no hay login: los datos son locales a ese navegador y esa máquina.
+
+---
+
+## 2. Cómo ejecutarlo
+
+Es una web estática pura, así que hay tres formas, de la más simple a la más completa:
+
+**Opción A — abrir el archivo directamente**
+
+```bash
+xdg-open index.html      # o doble clic en index.html
+```
+
+**Opción B — servidor local (recomendado)**
+
+```bash
+python3 -m http.server 8000
+# luego abrir http://localhost:8000
+```
+
+**Opción C — GitHub Pages**
+
+```bash
+git push origin master
+# Settings > Pages > Deploy from a branch > master / (root)
+```
+
+> La app **no necesita conexión a internet** ni dependencias. El archivo `index.zip` en la raíz es
+> una copia empaquetada del sitio ya publicado y no es necesario para nada del desarrollo.
+
+---
+
+## 3. Estructura del proyecto
+
+```
+Proyecto-Fer/
+├── index.html          # Estructura: 2 formularios + 2 tablas + total
+├── css/
+│   └── style.css       # Estilos (rosa pastel, tema "dulce")
+├── js/
+│   └── script.js       # Toda la lógica de la aplicación (649 líneas)
+├── index.zip           # Copia empaquetada del sitio publicado (artefacto)
+└── README.md           # Este documento
+```
+
+Todo el JavaScript vive en **un único archivo** sin módulos ni clases: son constantes globales de
+referencia al DOM, funciones puras de cálculo y listeners de eventos. Para entender el proyecto
+basta con leer `index.html` (qué existe) y `script.js` (qué hace).
+
+---
+
+## 4. Unidades y conversiones
+
+Es el corazón del cálculo de costos. Las unidades se agrupan por *tipo*, y solo se puede convertir
+dentro de un mismo tipo:
+
+| Tipo    | Unidades                  | Factor a la base |
+| ------- | ------------------------- | ---------------- |
+| Peso    | `g`, `kg`                 | 1 g, 1000 g      |
+| Volumen | `ml`, `cl`, `l`           | 1 ml, 10 ml, 1000 ml |
+| Unidad  | `unidad`, `paquete`       | 1                |
+
+Fórmula: `cantidadConvertida = cantidad × (factorOrigen / factorDestino)`
+
+Ejemplo: un ingrediente guardado en `kg` (precio por kilo = `precio / cantidad`) que se usa en la
+receta como `500 g` → se convierte `500 g → 0.5 kg` y el costo es `0.5 × precioPorKilo`.
+Nunca se mezclan pesos con volumen: la app avisa por consola y devuelve el valor sin convertir.
+
+---
+
+## 5. Fórmulas de negocio
+
+```text
+Precio unitario del insumo   = precio del lote / cantidad del lote
+Precio unitario (paquete)    = precio del lote / (cantidad × contenido)
+
+Costo del producto           = Σ costo de cada ingrediente usado
+                               (cantidad usada × precio unitario, ya convertido)
+
+Precio por % ganancia        = costo + (costo × porcentaje / 100)
+Ganancia                     = precio − costo
+Porcentaje de ganancia       = (precio − costo) / costo × 100
+Ganancia total               = Σ (precio − costo) de todos los productos
+```
+
+El porcentaje de ganancia es **margen sobre el costo** (markup), no sobre el precio de venta.
+
+---
+
+## 6. Documentación técnica
+
+El detalle completo — arquitectura, modelo de datos, flujo de cada función, catálogo de funciones,
+y un análisis de problemas detectados y mejoras sugeridas — está en
+**[DOCUMENTACION.md](DOCUMENTACION.md)**.
+
+---
+
+## 7. Estado actual y limitaciones conocidas
+
+- Solo 2 commits, sin `package.json`, sin tests, sin linter, sin `.gitignore`.
+- Sin reacción a cambios en insumos: si editás o borrás un ingrediente, los productos ya guardados
+  conservan el costo antiguo hasta que los edites a mano.
+- El límite de `localStorage` (~5 MB) puede agotarse si se cargan muchas imágenes en Base64.
+- Los nombres de ingredientes se usan como identificador único: dos ingredientes con el mismo
+  nombre colisionan.
+- `index.zip` duplica el código fuente en el repositorio y puede desincronizarse.
