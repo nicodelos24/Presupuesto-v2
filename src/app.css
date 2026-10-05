@@ -13,12 +13,16 @@
 
   body {
     min-height: 100dvh;
+    background-image:
+      radial-gradient(60rem 30rem at 110% -10%, rgb(54 94 242 / 0.10), transparent 60%),
+      radial-gradient(45rem 25rem at -10% 0%, rgb(16 185 138 / 0.08), transparent 55%);
+    background-attachment: fixed;
   }
 
   :focus-visible {
-    outline: 2px solid theme("colors.brand.500");
-    outline-offset: 2px;
-    border-radius: 4px;
+    outline: none;
+    box-shadow: theme("boxShadow.foco");
+    border-radius: 0.5rem;
   }
 
   input,
@@ -27,13 +31,17 @@
   button {
     font: inherit;
   }
+
+  ::selection {
+    background: theme("colors.brand.200");
+  }
 }
 
 @layer components {
   .campo {
     @apply w-full rounded-xl border border-ink-200 bg-white px-4 text-base
-      text-ink-900 placeholder:text-ink-300 focus:border-brand-500
-      focus:outline-none focus:ring-2 focus:ring-brand-500/20;
+      text-ink-900 placeholder:text-ink-300 transition hover:border-ink-300
+      focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-500/15;
     min-height: 44px;
   }
 
@@ -41,31 +49,82 @@
     @apply mb-1.5 block text-sm font-medium text-ink-600;
   }
 
-  .boton {
+  .boton,
+  .boton-primario,
+  .boton-secundario,
+  .boton-fantasma,
+  .boton-peligro {
     @apply inline-flex min-h-touch items-center justify-center gap-2 rounded-xl
-      px-4 font-medium transition active:scale-[0.98]
+      px-4 font-semibold transition-all duration-200 active:scale-[0.97]
       disabled:pointer-events-none disabled:opacity-50;
   }
 
   .boton-primario {
-    @apply boton bg-brand-600 text-white hover:bg-brand-700;
+    @apply text-white shadow-raised;
+    background-image: linear-gradient(135deg, #365ef2 0%, #1b2eb2 100%);
+  }
+
+  .boton-primario:hover {
+    background-image: linear-gradient(135deg, #203ddb 0%, #1b2a8d 100%);
   }
 
   .boton-secundario {
-    @apply boton border border-ink-200 bg-white text-ink-700 hover:bg-ink-50;
+    @apply border border-ink-200 bg-white text-ink-700 shadow-card
+      hover:-translate-y-px hover:border-ink-300 hover:shadow-raised;
+  }
+
+  .boton-fantasma {
+    @apply text-ink-600 hover:bg-ink-100;
+  }
+
+  .boton-peligro {
+    @apply bg-white text-red-600 ring-1 ring-inset ring-red-200 hover:bg-red-50;
   }
 
   .tarjeta {
-    @apply rounded-2xl border border-ink-100 bg-white p-4 shadow-card;
+    @apply rounded-2xl border border-ink-100 bg-white/85 p-4 shadow-card
+      backdrop-blur-sm transition-shadow hover:shadow-raised;
   }
 
   .error-campo {
-    @apply mt-1 text-sm text-red-600;
+    @apply mt-1 text-sm font-medium text-red-600;
+  }
+
+  .pastilla {
+    @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold;
+  }
+
+  .encabezado-hero {
+    @apply relative overflow-hidden rounded-3xl bg-marca-gradiente p-5 text-white shadow-raised;
+  }
+
+  .vineta {
+    @apply flex items-center gap-3 rounded-2xl border border-ink-100 bg-white p-3
+      shadow-card transition hover:-translate-y-0.5 hover:shadow-raised;
   }
 }
 
 @layer utilities {
   .safe-bottom {
     padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .numeros {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .esqueleto {
+    @apply relative overflow-hidden rounded-xl bg-ink-100;
+  }
+
+  .esqueleto::after {
+    content: "";
+    @apply absolute inset-0 animate-brillo;
+    background-image: linear-gradient(
+      90deg,
+      transparent,
+      rgb(255 255 255 / 0.6),
+      transparent
+    );
   }
 }

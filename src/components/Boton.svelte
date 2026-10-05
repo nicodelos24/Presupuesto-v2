@@ -1,11 +1,14 @@
 <script lang="ts">
   import type { Snippet } from "svelte";
 
+  type Variante = "primario" | "secundario" | "fantasma" | "peligro";
+
   interface Props {
-    variante?: "primario" | "secundario" | "fantasma" | "peligro";
+    variante?: Variante;
     tamano?: "md" | "sm";
     tipo?: "button" | "submit";
     deshabilitado?: boolean;
+    class?: string;
     onclick?: (evento: MouseEvent) => void;
     children: Snippet;
   }
@@ -15,19 +18,23 @@
     tamano = "md",
     tipo = "button",
     deshabilitado = false,
+    class: claseExtra = "",
     onclick,
     children,
   }: Props = $props();
 
+  const CLASES_VARIANTE: Record<Variante, string> = {
+    primario: "boton-primario",
+    secundario: "boton-secundario",
+    fantasma: "boton-fantasma",
+    peligro: "boton-peligro",
+  };
+
   const clases = $derived(
     [
-      "boton",
-      variante === "primario" && "bg-brand-600 text-white hover:bg-brand-700",
-      variante === "secundario" &&
-        "border border-ink-200 bg-white text-ink-700 hover:bg-ink-50",
-      variante === "fantasma" && "text-ink-600 hover:bg-ink-100",
-      variante === "peligro" && "bg-red-600 text-white hover:bg-red-700",
-      tamano === "sm" && "min-h-9 px-3 text-sm",
+      CLASES_VARIANTE[variante],
+      tamano === "sm" ? "min-h-9 px-3 text-sm" : "",
+      claseExtra,
     ]
       .filter(Boolean)
       .join(" "),

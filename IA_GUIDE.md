@@ -27,7 +27,7 @@ decisiones y cambios.
 | [T03c](#t03c--confirmación-del-stack-y-modelo-de-cobro) | Confirmación de stack, costos reales y modelo de cobro | Completada |
 | [T04](#t04-fase-0--cimientos) | Fase 0: cimientos del proyecto | Completada |
 | [T04b](#t04b--base-de-datos-en-supabase-y-fase-1-inicio) | Base de datos aplicada y verificada, inicio de Fase 1 | Completada |
-| [T05](#t05-fase-1--diseño-y-navegación) | Fase 1: diseño y navegación | En curso |
+| [T05](#t05-fase-1--diseño-y-navegación) | Fase 1: diseño y navegación | Completada |
 | [T06](#t06-fase-2--cuentas-y-negocios) | Fase 2: cuentas y negocios | Pendiente |
 | [T07](#t07-fase-3--inventario-y-costos) | Fase 3: inventario y costos reales | Pendiente |
 | [T08](#t08-fase-4--clientes-y-pedidos) | Fase 4: clientes y pedidos | Pendiente |
@@ -530,6 +530,117 @@ Pendiente.
 
 Layout mobile first, navegación inferior en móvil y sidebar en escritorio, componentes completos,
 tema claro y oscuro, estados vacíos y accesibilidad.
+
+---
+
+## T05 · Reforma estetica e inventario (rama `feat/diseno-profesional`)
+
+### Prompt textual
+
+> "Listo ahora si funciona, me gustaria darle un poquito mas de vida a la pagina visualmente, pero sin
+> perder esa estetica profesional, porque todo entra por la vista y quiza esta demasiado sobria aun la
+> estetica, quiza darle un toque mas dinamico y moderno sin perder lo profesional, otra duda que tengo es
+> que actualmente no se pueden agregar cosas al inventario, no se si es un eror o si todavia no se ha
+> implementado la funcionalidad, me ayudas con eso? Asegurate de tener todo commiteado y pusheado, y quiza
+> vemos esta reforma estetica en una branch si lo ves conveniente te parece? Asi continuamos, ademas
+> quisiera quitar ese color rosa, ya que la primer version era para una clienta femenina, y esta version ya
+> es para proponerla a negocios, asi que quiza deberia tener colores mas profesionales"
+
+### Estado
+
+Completada (rama `feat/diseno-profesional`).
+
+### Decision sobre la rama
+
+Se logro que la reforma visual y el inventario-functional vivan en una rama aparte, para poder revisar
+el aspecto nuevo sin mezclarlo con el resto del trabajo. La rama parte de `main` y se fusiona cuando
+el usuario apruebe el diseno.
+
+### Cambio de identidad visual: fuera el rosa
+
+Motivo de negocio, no estetico: la v1 fue hecha para una clienta y la v2 se ofrece a negocios. El rosa
+era una decision de contexto que hoy pesa mal.
+
+| Antes (v1) | Ahora (v2) |
+|---|---|
+| Rosa pastel `#d46a8c` como color principal | Azul profundo `#365ef2` a `#1b2eb2` |
+| Fondo rosa `#fff6f8` | Fondo neutro con dos halos suaves azul y verde |
+| Sin acento de color | Verde esmeralda reservado para ganancias y estados positivos |
+| Iconos emoji (X, lupa) | Iconos de linea de Lucide |
+| Tablas planas | Tarjetas con sombra, borde y elevacion al pasar el mouse |
+
+### Que se agrego para darle vida sin perder seriedad
+
+| Recurso | Donde | Para que |
+|---|---|---|
+| Encabezado con degradado y tres indicadores | Inicio | Da entrada visual y muestra el estado del dia de un vistazo |
+| Pastillas de estado con color | Inicio | Conectado en verde, sin sesion en ambar |
+| Realce en la ganancia | Inicio | La ganancia va sobre un bloque verde, es el dato que el dueño quiere ver |
+| Indicador de navegacion activo | Navegacion | Pastilla de fondo y color en la seccion actual |
+| Barra lateral con degradado | Escritorio | Marca la navegacion principal sin competir con el contenido |
+| Animaciones de entrada | Pantallas | Aparicion suave, sin marear |
+| Esqueletos de carga | Inventario | Evita el salto de contenido al cargar |
+| Estados vacios con icono en cuadro de color | Todas | Deja de sentirse como una pantalla muerta |
+
+### Inventario funcional
+
+Se implemento alta, edicion, busqueda y borrado de insumos. **No era un error: era una funcionalidad
+pendiente** de la Fase 3, adelantada ahora porque era lo unico que bloqueaba probar el costeo.
+
+Como todavia no hay inicio de sesion, las politicas de seguridad impiden escribir en la base. Para no
+tirar el trabajo, el acceso a datos se separo en un repositorio con dos implementaciones tras la misma
+interfaz:
+
+| Implementacion | Cuando se usa | Comportamiento |
+|---|---|---|
+| `crearRepositorioMemoria` | Ahora, sin sesion | Guarda en memoria con datos de ejemplo, se pierde al recargar |
+| `crearRepositorioSupabase` | Cuando haya sesion | Escribe en la tabla `insumos` del negocio del usuario |
+
+La pantalla muestra un aviso claro de que esta en modo demostracion, para que nadie crea que sus datos
+estan guardados. La interfaz, las validaciones y los calculos de precio unitario **no se tira**: se
+reutilizan tal cual cuando se conecte el repositorio de Supabase.
+
+Validaciones agregadas: nombre obligatorio, cantidad mayor a cero, precio no negativo y, cuando la unidad
+es paquete, contenido y unidad del contenido obligatorios. Cada insumo muestra su precio por unidad ya
+calculado (por ejemplo, `$48 por kg`).
+
+### Errores propios corregidos
+
+| Error | Causa | Como se resolvio |
+|---|---|---|
+| `The utility '' contains an invalid theme value` | Se uso `@apply boton` dentro de `.boton-primario`, y Tailwind no permite aplicar una clase propia | La clase base se declara en una lista de selectores compartida |
+| Los estilos no cambiaban al recargar | Cambiar `tailwind.config.js` exige reiniciar el servidor de desarrollo | Se documento y se reinicio |
+| `boton-{variante}` no generaba clases | Una clase interpolada no la puede detectar Tailwind | Mapa de variantes con nombres de clase literales |
+| Tipo incompatible con `null` en los datos de paquete | El tipo `Insumo` no admitia `null` y la base si lo devuelve | El tipo ahora acepta `null`, que describe mejor la base |
+
+### Verificaciones
+
+| Verificacion | Resultado |
+|---|---|
+| Typecheck | 0 errores (tras corregir los 5 del primer intento) |
+| Build | Correcto |
+| Tests | 48 pasan, sin cambios en el motor |
+
+### Advertencia sobre el rendimiento de la maquina
+
+El typecheck paso de 5 minutos a mas de 10. La causa es saturacion de CPU: con el servidor de
+desarrollo, el typecheck y el navegador abiertos a la vez, el load average llega a 12 en un
+procesador de dos nucleos. Recomendacion: correr el typecheck con el navegador cerrado y antes de
+commitear, no en cada cambio.
+
+### Agregado
+
+- `src/lib/datos/inventario.ts`: interfaz del repositorio, validaciones y semilla.
+- `src/lib/datos/inventarioSupabase.ts`: adaptador real contra la base.
+- `src/pages/Inventario.svelte`: pantalla completa con lista, buscador, formulario y confirmacion.
+
+### Decisiones
+
+| # | Decision | Motivo | Reversible |
+|---|---|---|---|
+| D19 | Azul profundo como color principal y verde esmeralda como acento | Seriedad para proponer a negocios: el rosa era de la v1 | Sí, son tokens |
+| D20 | Acceso a datos detras de una interfaz de repositorio | Permite escribir contra Supabase sin reescribir la pantalla | No (es la arquitectura) |
+| D21 | La reforma visual en una rama aparte | Permite revisar el aspecto sin mezclarlo con el resto del trabajo | Sí |
 
 ---
 
