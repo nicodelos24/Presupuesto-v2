@@ -5,6 +5,8 @@
 > JavaScript vanilla) y se está reconstruyendo como un producto comercial con cuentas de usuario,
 > diseño mobile first y arquitectura modular.
 >
+> - [PLAN_FUNCIONAL.md](PLAN_FUNCIONAL.md) — cómo debe funcionar cada pantalla, el calendario de
+>   producción, los pedidos, los gastos y el manejo de fotos.
 > - [ROADMAP.md](ROADMAP.md) — visión, arquitectura y hoja de ruta por fases.
 > - [IA_GUIDE.md](IA_GUIDE.md) — bitácora de pedidos, decisiones y cambios.
 > - [DOCUMENTACION.md](DOCUMENTACION.md) — análisis técnico de la base heredada y sus problemas.

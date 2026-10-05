@@ -28,7 +28,8 @@ decisiones y cambios.
 | [T04](#t04-fase-0--cimientos) | Fase 0: cimientos del proyecto | Completada |
 | [T04b](#t04b--base-de-datos-en-supabase-y-fase-1-inicio) | Base de datos aplicada y verificada, inicio de Fase 1 | Completada |
 | [T05](#t05-fase-1--diseño-y-navegación) | Fase 1: diseño y navegación | Completada |
-| [T06](#t06-fase-2--cuentas-y-negocios) | Fase 2: cuentas y negocios | Pendiente |
+| [T06](#t06-plan-funcional-del-sistema) | Plan funcional del sistema | Completada |
+| [T07](#t07-fase-2--cuentas-y-negocios) | Fase 2: cuentas y negocios | Pendiente |
 | [T07](#t07-fase-3--inventario-y-costos) | Fase 3: inventario y costos reales | Pendiente |
 | [T08](#t08-fase-4--clientes-y-pedidos) | Fase 4: clientes y pedidos | Pendiente |
 | [T09](#t09-fase-5--agenda-y-entregas) | Fase 5: agenda y entregas | Pendiente |
@@ -641,6 +642,109 @@ commitear, no en cada cambio.
 | D19 | Azul profundo como color principal y verde esmeralda como acento | Seriedad para proponer a negocios: el rosa era de la v1 | Sí, son tokens |
 | D20 | Acceso a datos detras de una interfaz de repositorio | Permite escribir contra Supabase sin reescribir la pantalla | No (es la arquitectura) |
 | D21 | La reforma visual en una rama aparte | Permite revisar el aspecto sin mezclarlo con el resto del trabajo | Sí |
+
+---
+
+## T06 · Plan funcional del sistema
+
+### Prompt textual
+
+> "Me gusta mucho el rediseno, esta buenisimo, ahora haz los commit push necesarios y quisiera
+> comenzar a encontrarle la funcionalidad y el diseno real que deberia tener todo, ya que ahora mismo se
+> perdio la funcionalidad principal de la pagina que era poder calcular ganancias y costos de recetas a
+> traves de los ingredientes del inventario, otra cosa que veo es que ya no se pueden agregar fotos para
+> ver los productos y eso era como una forma visual de tener las cosas a mano, pero no se si es buena
+> idea por el tema de consumo de espacio una vez que la pagina este levantada y con su base de datos,
+> podriamos comenzar a planear como deberia funcionar? Otra cosa que me gustaria es que en la parte de
+> agenda se muestre un calendario donde se pueda agendar pedidos por ejemplo, entonces se podria marcar
+> una fecha en la que deberia estar pronto ese pedido, y asi calcular los costos que vamos a tener
+> haciendo y vendiendo tal producto, y luego pode ver las ganancias que se tienen o que se van a tener
+> segun los productos que se van a vender, o los vendidos, tambien poder ver las ganancias y gastos de
+> productos que pueda ir guardando, como una especie de 'recetario' donde ya tenga la cantidad de
+> ingredientes que se necesitan para cada cosa ya guardados, entonces en base a todo eso se podrian
+> calcular cuanto inventario va a quedar una vez que marque cuantos productos se van a vender en el
+> calendario (o en esa seccion), es algo complicado de explicar pero podemos ir avanzando y haciendo
+> los cambios en la marcha y una vez terminemos podemos hacer toda la parte del servidor, no se si es
+> buena idea hacer eso, te parece?"
+
+### Estado
+
+Completada (planificacion). La implementacion queda para las fases siguientes.
+
+### Que se entrego
+
+Se escribio `PLAN_FUNCIONAL.md`, que define el modelo mental del producto **antes** de construirlo,
+respondiendo a las preguntas que aparecen en el pedido.
+
+### Las preguntas del usuario y su respuesta
+
+**1. Se perdio la funcion principal (costear recetas con los ingredientes del inventario).**
+Es correcto y es lo primero a recuperar. El motor de calculo nunca se perduo: esta escrito y testeado
+en `src/lib/costing.ts`, lo que falta es la pantalla que lo use, el recetario.
+
+**2. Las fotos: no es buena idea por el tema del espacio.**
+El riesgo era real en la v1 (Base64 dentro del navegador, limite de 5 MB y fallos silenciosos), pero
+en la v2 no lo es: las fotos van a Supabase Storage y el plan gratuito ofrece 1 GB. Reduciendo la
+imagen a 1200 px y WebP en el celular, cada foto queda entre 80 y 250 KB, o sea que entran entre 4.000
+y 10.000 fotos. Es una capacidad de sobra para un negocio. Ademas la foto tiene que ser siempre
+opcional: si no entra, el producto se guarda igual sin foto.
+
+**3. El calendario para agendar pedidos y calcular costos, ganancias e inventario restante.**
+Es la mejor idea del proyecto y la que mas justifica cobrar una cuota. Se especifico asi:
+
+- Se marca en una fecha cuantos productos se van a producir, y el sistema calcula al instante el costo
+  de produccion, los ingresos esperados y la ganancia de ese dia.
+- Se cruza con el inventario para mostrar el stock disponible, el stock comprometido por pedidos
+  anteriores y el stock que queda.
+- Avisa los faltantes: que insumo hay que comprar si o si y a cuanto proveedor. Ese aviso es lo que
+  un cuaderno no puede dar y lo que justifica el sistema.
+- Ademas se convirtio en el calculo de inventario restante que pidio: si se agenda producir X unidades,
+  se descuenta del stock lo que llevan las recetas de esos productos.
+
+**4. Un 'recetario' con las cantidades ya guardadas.**
+Es exactamente el modulo de Recetario: productos con su receta de ingredientes. El costo se calcula
+siempre en vivo mientras se carga la receta, y el total y el margen se ven antes de guardar.
+
+**5. Poder ver ganancias y gastos.**
+Se agrego el modulo de gastos (luz, gas, packaging, servicios) para poder mostrar el resultado del
+mes: ventas menos costo de insumos menos otros gastos. Sin eso el sistema solo sirve para cotizar.
+
+**6. Conviene construir todo antes del servidor.**
+Es buena idea con una condicion. Se puede y conviene, porque el motor de calculo ya existe y la
+interfaz trabaja contra un repositorio intercambiable, no contra Supabase. La condicion es que el
+paso de cuentas de usuario no se deje para el final: es la parte con mas riesgo tecnico y si llega
+tarde, arrastra cambios. Por eso el orden propuesto las pone antes de pedidos y entregas.
+
+### Orden de construccion acordado
+
+| Orden | Que | Razon |
+|---|---|---|
+| 1 | Recetario con costeo en vivo | Es la funcion principal |
+| 2 | Agenda con produccion planificada y faltantes | Es lo que da valor real |
+| 3 | Inventario conectado al recetario | La pantalla ya existe |
+| 4 | Cuentas de usuario y persistencia | Sin esto no se guarda nada |
+| 5 | Pedidos, clientes y entregas | Vienen sobre lo anterior |
+| 6 | Gastos y resultado mensual | Cierra el circulo financiero |
+
+### Cambio de navegacion propuesto
+
+Se libera un lugar en la barra inferior: **Mas** no es operacion diaria y pasa a la cabecera,
+dejando el lugar para **Recetario**.
+
+```
+Antes:  Inicio · Pedidos · Agenda · Inventario · Mas
+Ahora:  Inicio · Recetario · Pedidos · Agenda · Inventario
+```
+
+### Agregado
+
+- `PLAN_FUNCIONAL.md`: especificacion de las pantallas, del calendario de produccion, de los pedidos,
+  de los gastos, de la politica de fotos, del orden de construccion y de las decisiones a tomar.
+
+### Rama y merge
+
+La rama `feat/diseno-profesional` se fusiono a `main` al ser aprobado el rediseno por el usuario
+(commit `318e527`).
 
 ---
 
