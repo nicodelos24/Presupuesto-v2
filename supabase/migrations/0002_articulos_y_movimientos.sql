@@ -18,6 +18,13 @@ drop table if exists public.entregas;
 drop table if exists public.pedidos;
 drop table if exists public.clientes;
 
+-- Estos tres tipos ya los creo la migracion 0001. Se borran primero porque
+-- Postgres no permite recrear un tipo que ya existe, y las tablas que los usan
+-- se eliminaron mas arriba.
+drop type if exists public.estado_pedido;
+drop type if exists public.estado_pago;
+drop type if exists public.estado_entrega;
+
 create type public.tipo_articulo as enum ('materia_prima', 'preparado', 'producto');
 
 create table public.articulos (
