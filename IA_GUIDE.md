@@ -938,3 +938,39 @@ Tabla maestra. Si una decisión cambia, se agrega una fila nueva en lugar de ree
 | D16 | Las tres opciones del asistente de Supabase marcadas | T04 | La RLS automatica evita que una tabla nueva quede abierta por olvido | Sí |
 | D17 | Navegacion por hash propia, sin libreria de enrutado | T04b | Cinco rutas no justifican una dependencia; ademas mantiene el bundle chico | Sí |
 | D18 | Componentes con propiedades en espanol y atributos HTML en ingles | T04b | Evita las colisiones entre el nombre de la property y el del atributo real | No (es convencion del proyecto) |
+
+### Verificacion: el problema de copiar resultados a mano
+
+El editor de Supabase solo muestra el resultado de la ultima consulta de un lote, y el usuario termino
+transcribiendo a mano una lista de veinte filas de politicas. Se resolvio con dos artefactos:
+
+- `supabase/verificar_rapido.sql`: una sola consulta que devuelve **un texto**: `TODO VERDE` o el
+  nombre exacto del problema. Asi el usuario solo tiene que informar una palabra.
+- `supabase/0003_corregir_nombre_politica.sql`: corrige el nombre de una politica que quedo mal escrito
+  (`acceso provedores`) al copiar el archivo a mano. No cambia el comportamiento.
+
+Regla para adelante: toda verificacion que se le pida al usuario debe devolver **una sola fila y una
+sola columna de texto**.
+
+### Error de la migracion 0002 y su correccion
+
+La primera corrida dio `ERROR 42710: type "estado_pedido" already exists`. Causa: los tipos de estado
+de pedido, pago y entrega ya los habia creado la migracion 0001 y la 0002 los volvia a crear. Se
+agregaron los `drop type if exists` correspondientes al principio de la 0002.
+
+Detalle util: el editor de SQL es solo un cuaderno. Pegar texto no crea nada; solo se aplica al
+presionar Run. El usuario puede borrar y pegar libremente entre ejecuciones.
+
+### Estado de la base tras aplicar 0001 y 0002
+
+| Verificacion | Resultado |
+|---|---|
+| Tablas | 17 |
+| Tablas con RLS | 17 |
+| Politicas | 20 |
+| Funciones de apoyo | 3, todas `security_definer` |
+
+Las 17 tablas son las 4 de la 0001 que sobreviven (`unidades`, `negocios`, `miembros`, `proveedores`)
+mas las 13 de la 0002. Las 20 politicas son las 6 que quedaron de la 0001 mas las 13 de la 0002, con
+una de nombre mal escrito que se corrigio en la 0003.
+
