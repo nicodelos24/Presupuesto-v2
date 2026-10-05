@@ -1,6 +1,7 @@
 <script lang="ts">
   import MarcoApp from "./layouts/MarcoApp.svelte";
   import Inicio from "./pages/Inicio.svelte";
+  import Recetario from "./pages/Recetario.svelte";
   import Pedidos from "./pages/Pedidos.svelte";
   import Agenda from "./pages/Agenda.svelte";
   import Inventario from "./pages/Inventario.svelte";
@@ -27,6 +28,8 @@
 <MarcoApp {rutaActual} onnavegar={navegar}>
   {#if rutaActual === "inicio"}
     <Inicio />
+  {:else if rutaActual === "recetario"}
+    <Recetario />
   {:else if rutaActual === "pedidos"}
     <Pedidos />
   {:else if rutaActual === "agenda"}

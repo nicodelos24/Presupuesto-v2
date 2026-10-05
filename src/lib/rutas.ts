@@ -1,4 +1,10 @@
-export type IdRuta = "inicio" | "pedidos" | "agenda" | "inventario" | "mas";
+export type IdRuta =
+  | "inicio"
+  | "recetario"
+  | "pedidos"
+  | "agenda"
+  | "inventario"
+  | "mas";
 
 export interface DefinicionRuta {
   id: IdRuta;
@@ -15,6 +21,13 @@ export const RUTAS: DefinicionRuta[] = [
     etiqueta: "Inicio",
     etiquetaCorta: "Inicio",
     titulo: "Resumen del dia",
+  },
+  {
+    id: "recetario",
+    ruta: "/recetario",
+    etiqueta: "Recetario",
+    etiquetaCorta: "Recetario",
+    titulo: "Recetario",
   },
   {
     id: "pedidos",

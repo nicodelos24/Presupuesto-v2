@@ -30,7 +30,8 @@ decisiones y cambios.
 | [T05](#t05-fase-1--diseño-y-navegación) | Fase 1: diseño y navegación | Completada |
 | [T06](#t06-plan-funcional-del-sistema) | Plan funcional del sistema | Completada |
 | [T07](#t07-ampliacion-del-plan-proveedores-stock-recetas-de-recetas-y-avisos) | Ampliación del plan y modelo de datos | Completada |
-| [T08](#t08-fase-2--cuentas-y-negocios) | Fase 2: cuentas y negocios | Pendiente |
+| [T08](#t08-articulos-unificados-motor-recursivo-y-recetario) | Artículos unificados, motor recursivo y recetario | Completada |
+| [T09](#t09-fase-2--cuentas-y-negocios) | Fase 2: cuentas y negocios | Pendiente |
 | [T07](#t07-fase-3--inventario-y-costos) | Fase 3: inventario y costos reales | Pendiente |
 | [T08](#t08-fase-4--clientes-y-pedidos) | Fase 4: clientes y pedidos | Pendiente |
 | [T09](#t09-fase-5--agenda-y-entregas) | Fase 5: agenda y entregas | Pendiente |
@@ -878,6 +879,64 @@ Pendiente.
 
 Ingredientes, proveedores, compras con varias líneas, recálculo en cascada de costos y márgenes,
 recetas, productos e historial de costos.
+
+---
+
+## T08 · Articulos unificados, motor recursivo y recetario
+
+### Prompt textual
+
+Continuacion de la consigna anterior, ejecutada sobre el plan documentado.
+
+### Estado
+
+Completada.
+
+### Trabajo realizado
+
+1. **Modelo unificado**: se reemplazo `Insumo` por `Articulo`, con banderas `esVendible` y
+   `esElaborado`, para que un preparado pueda venderse y usarse en otra receta a la vez.
+2. **Motor de costeo recursivo** (`src/lib/costoRecetas.ts`) que resuelve recetas de recetas, divide
+   por el rendimiento de la tanda, aplica la merma, detecta ciclos y calcula insumos faltantes.
+3. **Recetario** (`src/pages/Recetario.svelte`): alta de productos con receta y costeo en vivo.
+4. **Estado compartido** (`src/lib/estado.svelte.ts`) para que los datos sobrevivan a la navegacion.
+5. **Navegacion**: Recetario entra en la barra inferior y Mas pasa a la cabecera.
+
+### Bugs propios detectados durante la implementacion
+
+| Bug | Causa | Correccion |
+|---|---|---|
+| Los datos se perdian al cambiar de pantalla | Cada pagina creaba su propio repositorio en memoria | Estado compartido en un unico modulo |
+| Un preparado con receta circular rompia el calculo | No habia deteccion de ciclos | Se detectan antes de calcular, con limite de profundidad |
+| `cargando` no se podia reasignar | Un estado exportado es una constante en Svelte 5 | Se paso a un objeto `estado.cargando` |
+| El costo de un preparado con paquete mal prorrateado | Se dividia por paquetes y despues se prorroteaba | Se convierte primero a la unidad base del contenido |
+
+### Correccion conceptual importante
+
+La `merma` y el `rendimiento` no son lo mismo, y esta distincion quedo implementada de forma explicita:
+
+- **Rendimiento**: cuanto sale de una tanda. Si 500 g de arroz rinden 400 g cocidos, el rendimiento es
+  400 g. El costo se divide por eso.
+- **Merma**: el costo extra del proceso (aceite, especias, lo que se rompe). Se aplica como
+  multiplicador sobre el costo.
+
+Antes habia una sola idea para los dos casos y el costo salia mal.
+
+### Verificaciones
+
+| Verificacion | Resultado |
+|---|---|
+| Tests | 39 pasan |
+| Typecheck | 0 errores, 0 avisos |
+| Cobertura del motor | 20 tests: conversiones, rendimiento, merma, ciclos, faltantes |
+
+### Pendiente
+
+- El **libro de movimientos** que actualiza el stock automaticamente al producir todavia no esta
+  implementado: el stock se edita a mano desde Inventario. Es el proximo paso y es lo que impide que
+  los numeros sean falsos.
+- El precio de venta se calcula y se muestra en el formulario, pero todavia no hay pantalla de ventas
+  ni de pedidos.
 
 ---
 

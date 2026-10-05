@@ -9,58 +9,94 @@ export type CodigoUnidad =
 
 export type TipoUnidad = "peso" | "volumen" | "unidad";
 
+export type TipoArticulo = "materia_prima" | "preparado" | "producto";
+
 export type Id = string;
 
-export interface Insumo {
-  id: Id;
-  nombre: string;
-  unidad: CodigoUnidad;
-  cantidadComprada: number;
-  precioLote: number;
-  contenidoPaquete?: number | null;
-  unidadContenido?: CodigoUnidad | null;
-  costoActual?: number | null;
-  activo?: boolean;
-}
-
 export interface ItemReceta {
-  insumoId: Id;
+  articuloId: Id;
   cantidad: number;
   unidad: CodigoUnidad;
 }
 
-export interface Producto {
+export interface Articulo {
   id: Id;
   nombre: string;
-  precioVenta: number;
-  costoManual?: number | null;
+  tipo: TipoArticulo;
+  esVendible: boolean;
+  esElaborado: boolean;
+
+  /** Unidad en la que se maneja el stock y el costo. */
+  unidad: CodigoUnidad;
+
+  /** Con que unidad se compra al proveedor. Puede ser un paquete. */
+  unidadCompra: CodigoUnidad | null;
+  contenidoPaquete: number | null;
+  unidadContenido: CodigoUnidad | null;
+
+  /** Nunca se edita a mano: es el resultado de los movimientos. */
+  stock: number;
+  /** Costo por unidad base. Se recalcula con costo promedio en cada compra. */
+  costoPromedio: number;
+
+  /** Cuanto rinde una tanda. Obligatorio si es elaborado. */
+  rendimientoCantidad: number | null;
+  rendimientoUnidad: CodigoUnidad | null;
+
+  /**
+   * Costo extra del proceso (aceite, especias, lo que se rompe).
+   * No es la perdida de masa: eso va en el rendimiento.
+   */
+  mermaPct: number;
+
+  stockMinimo: number | null;
+  proveedorId: string | null;
+  fotoUrl: string | null;
+  notas: string | null;
   receta: ItemReceta[];
-  activo?: boolean;
+  activo: boolean;
 }
 
 export type MotivoError =
-  | "insumo-inexistente"
-  | "insumo-inactivo"
+  | "articulo-inexistente"
+  | "articulo-inactivo"
   | "cantidad-invalida"
   | "unidad-incompatible"
   | "paquete-requiere-contenido"
-  | "paquete-sobre-ingrediente-simple"
-  | "precio-invalido";
+  | "paquete-sobre-articulo-simple"
+  | "precio-invalido"
+  | "rendimiento-invalido"
+  | "receta-vacia"
+  | "ciclo-detectado"
+  | "profundidad-excedida";
 
 export interface DetalleCosteo {
-  insumoId: Id;
+  articuloId: Id;
   nombre: string;
   cantidadPedida: number;
   unidadPedida: CodigoUnidad;
   cantidadBase: number | null;
-  unidadBase: CodigoUnidad | null;
+  costoUnitario: number | null;
   costo: number;
   error: MotivoError | null;
 }
 
 export interface ResultadoCosteo {
-  costoTotal: number;
+  articuloId: Id;
+  /** Costo por unidad base del artículo. */
+  costoUnitario: number;
   costoValido: boolean;
-  detalles: DetalleCosteo[];
   errores: MotivoError[];
+  detalles: DetalleCosteo[];
+}
+
+export type Catalogo = Map<Id, Articulo>;
+
+export interface NecesidadInsumo {
+  articuloId: Id;
+  nombre: string;
+  unidad: CodigoUnidad;
+  cantidad: number;
+  stock: number;
+  faltante: number;
 }

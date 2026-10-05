@@ -3,9 +3,9 @@
     CalendarDays,
     ClipboardList,
     House,
-    Package,
     User,
     Boxes,
+    ChefHat,
   } from "lucide-svelte";
   import type { Snippet } from "svelte";
   import type { IdRuta } from "../lib/rutas";
@@ -20,11 +20,13 @@
 
   const items = [
     { id: "inicio" as const, etiqueta: "Inicio", icono: House },
+    { id: "recetario" as const, etiqueta: "Recetario", icono: ChefHat },
     { id: "pedidos" as const, etiqueta: "Pedidos", icono: ClipboardList },
     { id: "agenda" as const, etiqueta: "Agenda", icono: CalendarDays },
     { id: "inventario" as const, etiqueta: "Inventario", icono: Boxes },
-    { id: "mas" as const, etiqueta: "Mas", icono: User },
   ];
+
+  const itemsEscritorio = [...items, { id: "mas" as const, etiqueta: "Mas", icono: User }];
 </script>
 
 <div class="min-h-dvh lg:flex">
@@ -39,7 +41,7 @@
     </div>
 
     <nav class="mt-8 flex-1 space-y-1.5">
-      {#each items as item (item.id)}
+      {#each itemsEscritorio as item (item.id)}
         <button
           class="group flex min-h-touch w-full items-center gap-3 rounded-xl px-3 text-left text-sm font-medium transition-all duration-200 {rutaActual ===
           item.id
@@ -73,7 +75,13 @@
         <span class="h-2.5 w-2.5 rounded-full bg-accent-500"></span>
         Presupuesto
       </span>
-      <Package size={20} class="text-ink-300" />
+      <button
+        class="flex h-9 items-center gap-1.5 rounded-xl px-2.5 text-sm font-medium text-ink-500 transition hover:bg-ink-100"
+        onclick={() => onnavegar("mas")}
+      >
+        <User size={17} />
+        Mas
+      </button>
     </header>
 
     <main class="flex-1 px-4 pb-28 pt-5 lg:px-8 lg:pb-12">
