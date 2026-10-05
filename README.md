@@ -1,11 +1,27 @@
+# Presupuesto v2
+
+> **Estado del proyecto: en reconstrucción.**
+> Este repositorio arranca como una copia de la v1 (`Proyecto-Fer`, una app estática en HTML, CSS y
+> JavaScript vanilla) y se está reconstruyendo como un producto comercial con cuentas de usuario,
+> diseño mobile first y arquitectura modular.
+>
+> - [ROADMAP.md](ROADMAP.md) — visión, arquitectura y hoja de ruta por fases.
+> - [IA_GUIDE.md](IA_GUIDE.md) — bitácora de pedidos, decisiones y cambios.
+> - [DOCUMENTACION.md](DOCUMENTACION.md) — análisis técnico de la base heredada y sus problemas.
+>
+> El código actual en `index.html`, `css/` y `js/` es **la v1 sin modificar** y describe el estado
+> anterior del proyecto. Reemplazará a medida que se completen las fases.
+
+---
+
 # Proyecto Fer — Calculadora de presupuestos y costos
 
 Aplicación web de una sola página para calcular el **costo real de productos** (por ejemplo, recetas de
 pastelería o artesanía) a partir de un inventario de insumos, y definir su **precio de venta** en
-pesos uruguayos (UYU).
+pesos uruguayos (UYU). *Esta sección describe la v1.*
 
 - **Autor:** [nicodelos24](https://github.com/nicodelos24)
-- **Repositorio:** https://github.com/nicodelos24/Proyecto-Fer
+- **Repositorio base:** https://github.com/nicodelos24/Proyecto-Fer
 - **Licencia:** sin licencia declarada
 - **Stack:** HTML + CSS + JavaScript puro (vanilla). Sin frameworks, sin dependencias, sin build.
 
