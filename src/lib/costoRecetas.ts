@@ -99,8 +99,7 @@ export function costoUnitarioArticulo(
       resultado = 0;
     } else {
       const costeo = costearRecetaConEstado(articulo.receta, ctx);
-      const merma = 1 + (articulo.mermaPct || 0) / 100;
-      resultado = (costeo.costoTotal / rendimiento) * merma;
+      resultado = costeo.costoTotal / rendimiento;
     }
   }
 
@@ -260,13 +259,12 @@ export function needingInsumos(
   }
 
   const tandas = cantidadDeseada / rendimiento;
-  const merma = 1 + (articulo.mermaPct || 0) / 100;
 
   for (const item of articulo.receta) {
     const hijo = catalogo.get(item.articuloId);
     if (!hijo || !hijo.activo) continue;
 
-    const cantidad = item.cantidad * tandas * merma;
+    const cantidad = item.cantidad * tandas;
     const enBase = aUnidadBase(cantidad, item.unidad, hijo);
     if (enBase === null) continue;
 

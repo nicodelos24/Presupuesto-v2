@@ -154,7 +154,6 @@
       costoPromedio,
       rendimientoCantidad: enEdicion?.rendimientoCantidad ?? null,
       rendimientoUnidad: enEdicion?.rendimientoUnidad ?? null,
-      mermaPct: enEdicion?.mermaPct ?? 0,
       stockMinimo,
       proveedorId: null,
       fotoUrl: enEdicion?.fotoUrl ?? null,

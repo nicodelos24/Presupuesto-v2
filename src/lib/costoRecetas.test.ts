@@ -153,12 +153,14 @@ describe("costeo de un preparado", () => {
     expect(costo).toBeCloseTo(costoReceta / 800, 10);
   });
 
-  it("suma la merma como costo extra del proceso", () => {
-    const conMerma = { ...salsa, mermaPct: 20 };
-    const catalogoConMerma = catalogoDe(harina, leche, tomate, conMerma);
-    const costo = costoUnitarioArticulo(conMerma, catalogoConMerma);
+  it("el costo sale solo de la receta, sin porcentajes extra", () => {
+    // No hay merma. El aceite, la luz y el gas son gastos reales y se registran
+    // en la tabla de gastos, no como un porcentaje que infla el costo de cada
+    // receta. Verificar que el costo es exactamente receta / rendimiento.
+    const catalogoSalsa = catalogoDe(harina, leche, tomate, salsa);
+    const costo = costoUnitarioArticulo(salsa, catalogoSalsa);
     const costoReceta = 1 * 60 + 0.2 * 80;
-    expect(costo).toBeCloseTo((costoReceta / 800) * 1.2, 10);
+    expect(costo).toBeCloseTo(costoReceta / 800, 10);
   });
 
   it("avisa cuando el rendimiento no es valido", () => {

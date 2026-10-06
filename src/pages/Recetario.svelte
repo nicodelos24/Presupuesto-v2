@@ -46,7 +46,6 @@
   let unidad = $state<CodigoUnidad>("unidad");
   let rendimientoCantidad = $state<number | null>(1);
   let rendimientoUnidad = $state<CodigoUnidad>("unidad");
-  let mermaPct = $state(0);
   let precioVenta = $state<number | null>(null);
   let margenObjetivo = $state(60);
   let receta = $state<ItemReceta[]>([]);
@@ -75,7 +74,6 @@
     costoPromedio: enEdicion?.costoPromedio ?? 0,
     rendimientoCantidad,
     rendimientoUnidad,
-    mermaPct,
     stockMinimo: null,
     proveedorId: null,
     fotoUrl: null,
@@ -141,7 +139,6 @@
     unidad = "unidad";
     rendimientoCantidad = 1;
     rendimientoUnidad = "unidad";
-    mermaPct = 0;
     precioVenta = null;
     margenObjetivo = 60;
     receta = [];
@@ -158,7 +155,6 @@
     unidad = articulo.unidad;
     rendimientoCantidad = articulo.rendimientoCantidad;
     rendimientoUnidad = articulo.rendimientoUnidad ?? "unidad";
-    mermaPct = articulo.mermaPct;
     precioVenta = null;
     receta = [...articulo.receta];
     errores = {};
@@ -218,7 +214,6 @@
       costoPromedio: enEdicion?.costoPromedio ?? 0,
       rendimientoCantidad,
       rendimientoUnidad,
-      mermaPct,
       stockMinimo: null,
       proveedorId: null,
       fotoUrl: enEdicion?.fotoUrl ?? null,
@@ -499,24 +494,6 @@
             torta que se corta en 8 porciones también va 8.
           </p>
 
-          <div>
-            <label class="etiqueta" for="merma">
-              Costo extra del proceso (%)
-            </label>
-            <input
-              class="campo"
-              id="merma"
-              type="number"
-              min={0}
-              max={99}
-              step="any"
-              bind:value={mermaPct}
-            />
-            <p class="mt-1 text-sm text-ink-400">
-              Aceite, especias, lo que se rompe. La perdida de masa va en el
-              rendimiento, no aca.
-            </p>
-          </div>
 
           <div class="space-y-2.5">
             <p class="etiqueta mb-0">Ingredientes de la receta</p>

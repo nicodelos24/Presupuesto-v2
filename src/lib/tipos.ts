@@ -47,10 +47,10 @@ export interface Articulo {
   rendimientoUnidad: CodigoUnidad | null;
 
   /**
-   * Costo extra del proceso (aceite, especias, lo que se rompe).
-   * No es la perdida de masa: eso va en el rendimiento.
+   * No hay porcentaje de merma. El aceite, la luz y el gas son gastos reales
+   * y se registran en la tabla `gastos`, no como un porcentaje inventado acá.
+   * La perdida de masa ya la cubre el rendimiento.
    */
-  mermaPct: number;
 
   stockMinimo: number | null;
   proveedorId: string | null;

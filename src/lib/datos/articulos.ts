@@ -13,7 +13,6 @@ export interface DatosArticulo {
   costoPromedio: number;
   rendimientoCantidad: number | null;
   rendimientoUnidad: Articulo["rendimientoUnidad"];
-  mermaPct: number;
   stockMinimo: number | null;
   proveedorId: string | null;
   fotoUrl: string | null;
@@ -43,10 +42,6 @@ export function validarArticulo(datos: DatosArticulo): Record<string, string> {
 
   if (!Number.isFinite(datos.costoPromedio) || datos.costoPromedio < 0) {
     errores.costoPromedio = "El costo no puede ser negativo";
-  }
-
-  if (datos.mermaPct < 0 || datos.mermaPct >= 100) {
-    errores.mermaPct = "La merma va de 0 a 99";
   }
 
   if (datos.duracionDias !== null) {
@@ -127,7 +122,6 @@ function semilla(): Articulo[] {
     unidadContenido: null,
     rendimientoCantidad: null,
     rendimientoUnidad: null,
-    mermaPct: 0,
     stockMinimo: null,
     proveedorId: null,
     fotoUrl: null,

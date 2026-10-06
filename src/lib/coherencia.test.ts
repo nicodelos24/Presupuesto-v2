@@ -17,7 +17,6 @@ function materiaDePrueba(id: string, costo: number): Articulo {
     costoPromedio: costo,
     rendimientoCantidad: null,
     rendimientoUnidad: null,
-    mermaPct: 0,
     stockMinimo: null,
     proveedorId: null,
     fotoUrl: null,
@@ -29,9 +28,9 @@ function materiaDePrueba(id: string, costo: number): Articulo {
 }
 
 describe("coherencia entre costear y consumir", () => {
-  // Se verifico que la merma NO se cuenta dos veces: el costeo de un plato y
-  // los insumos que hace falta gastar para producirlo tienen que dar lo mismo.
-  // Se estuvo RULEANDO que si, y no era asi. Este test lo deja fijado para
+  // Se verifica que el costeo de un plato y
+  // los insumos que hace falta gastar para producirlo dan lo mismo.
+  // Se sospecho que si y no era asi. Este test lo deja fijado para
   // que no se rompa si alguien toca el motor.
 
   const tomate = materiaDePrueba("tomate", 10);
@@ -45,7 +44,6 @@ describe("coherencia entre costear y consumir", () => {
     unidad: "ml",
     stock: 0,
     costoPromedio: 0,
-    mermaPct: 10,
     rendimientoCantidad: 1000,
     rendimientoUnidad: "ml",
     receta: [{ articuloId: "tomate", cantidad: 500, unidad: "g" }],
@@ -60,7 +58,6 @@ describe("coherencia entre costear y consumir", () => {
     unidad: "unidad",
     stock: 0,
     costoPromedio: 0,
-    mermaPct: 20,
     rendimientoCantidad: 1,
     rendimientoUnidad: "unidad",
     receta: [{ articuloId: "salsa", cantidad: 200, unidad: "ml" }],
@@ -79,12 +76,11 @@ describe("coherencia entre costear y consumir", () => {
     expect(costoPorPlato * 100).toBeCloseTo(costoDeLosInsumos, 6);
   });
 
-  it("la merma de cada nivel se aplica una sola vez", () => {
-    // Salsa: 500 g de tomate rinden 1000 ml, con 10% de merma.
-    // Plato: 200 ml de salsa rinden 1 unidad, con 20% de merma.
-    // Si la merma se contara dos veces el numero seria 1.10 x 1.20 en cada via.
+  it("el costo se reparte exacto entre las porciones", () => {
+    // La receta es de 1000 ml de salsa. Cada ml cuesta lo mismo, sin porcentajes
+    // que lo ajusten: 500 g x $10 = 5000, sobre 1000 ml = 5 por ml.
     const costo = costearArticulo(plato, catalogo).costoUnitario;
-    const esperado = 500 * 10 * 1.1 * (200 / 1000) * 1.2;
+    const esperado = 500 * 10 * (200 / 1000);
 
     expect(costo).toBeCloseTo(esperado, 6);
   });
