@@ -12,6 +12,8 @@
 > - [ROADMAP.md](ROADMAP.md) — visión, arquitectura y hoja de ruta por fases.
 > - [IA_GUIDE.md](IA_GUIDE.md) — bitácora de pedidos, decisiones y cambios.
 > - [DOCUMENTACION.md](DOCUMENTACION.md) — análisis técnico de la base heredada y sus problemas.
+> - [DEUDA_TECNICA.md](DEUDA_TECNICA.md) — problemas verificados que hay hoy en el código, con cómo
+>   se comprueban.
 > - [Usuario-revisiones.txt](Usuario-revisiones.txt) — lista del usuario con lo que quiere corregir,
 >   implementar o quitar. Cada línea arranca con un símbolo que dice en qué estado está.
 >

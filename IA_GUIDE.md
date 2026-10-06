@@ -118,7 +118,21 @@ problema es que cada máquina resuelve la URL como puede.
 | [T10](#t10--todo-vendible-vencimientos-y-receta-de-recetas)                    | Todo vendible, vencimientos y receta de recetas        | Completada  |
 
 
-### Fases planificadas
+#### Inventario de la deuda técnica
+
+Los problemas verificados que hay hoy en el código, con la forma de comprobarlos, viven en
+[DEUDA_TECNICA.md](DEUDA_TECNICA.md) y no se repiten acá. Cada tarea que cierre uno lo borra de esa
+lista y lo registra en su entrada correspondiente.
+
+Se crea después de T11, al auditar qué de lo que se había conversado quedó anotado y qué no. El
+resultado de esa auditoría fue que faltaban cinco problemas, siendo el más grave que **no hay
+persistencia: los datos se pierden al recargar la página**.
+
+Esa auditoría también desmintió una sospecha: se creía que la merma se contaba dos veces al anidar
+recetas, y al comprobarlo con un test resultó que no. El cálculo de costo y el consumo de insumos
+coinciden exactamente. El test que lo fija quedó en `src/lib/coherencia.test.ts`.
+
+## Fases planificadas
 
 | #                                                             | Fase                               | Estado     |
 | ------------------------------------------------------------- | ---------------------------------- | ---------- |
