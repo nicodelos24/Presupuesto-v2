@@ -12,9 +12,28 @@
 > - [ROADMAP.md](ROADMAP.md) — visión, arquitectura y hoja de ruta por fases.
 > - [IA_GUIDE.md](IA_GUIDE.md) — bitácora de pedidos, decisiones y cambios.
 > - [DOCUMENTACION.md](DOCUMENTACION.md) — análisis técnico de la base heredada y sus problemas.
+> - [Usuario-revisiones.txt](Usuario-revisiones.txt) — lista del usuario con lo que quiere corregir,
+>   implementar o quitar. Cada línea arranca con un símbolo que dice en qué estado está.
 >
 > El código actual en `index.html`, `css/` y `js/` es **la v1 sin modificar** y describe el estado
 > anterior del proyecto. Reemplazará a medida que se completen las fases.
+
+### Acceso al repositorio
+
+El remoto es **SSH** (`git@github.com:nicodelos24/Presupuesto-v2.git`), no HTTPS.
+
+El proyecto se trabaja en dos computadoras, una con Linux y otra con Windows. Con una clave SSH
+registrada una sola vez en GitHub, las dos funcionan sin pedir credenciales. Con HTTPS hay que
+resolverlo cada vez que se cambia de máquina.
+
+Si el remoto quedó en HTTPS por error:
+
+```bash
+git remote set-url origin git@github.com:nicodelos24/Presupuesto-v2.git
+```
+
+En una máquina nueva, después de clonar, conviene comprobar con `ssh -T git@github.com`. La
+instalación de la clave en Linux y en Windows está en [IA_GUIDE.md](IA_GUIDE.md).
 
 ---
 

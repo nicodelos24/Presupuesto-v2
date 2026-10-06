@@ -34,6 +34,67 @@ símbolo que dice en qué estado está:
 anotado se resuelve, se marca con `x` y se menciona en la entrada correspondiente de este registro.
 Si no se tocó, se deja como está. El archivo nunca se reescribe: solo cambian los símbolos.
 
+**Sobre el acceso a GitHub: siempre por SSH.** El remoto de este repositorio es una dirección SSH
+(`git@github.com:...`), nunca una HTTPS.
+
+El usuario trabaja en **dos computadoras**: una con Linux y otra con Windows. Con una clave SSH
+registrada una sola vez en GitHub, las dos funcionan sin pedir credenciales cada vez. Con HTTPS, Git
+pide usuario y contraseña o token en cada máquina y hay que resolverlo cada vez que se cambia.
+
+**Regla para quien trabaje en este proyecto:** no cambiar el remoto a HTTPS, no pedir credenciales, no
+sugerir cambiar a token. Si una operación falla por autenticación, es que la clave SSH no está
+instalada en esa máquina, y se arregla en la máquina, no en el repositorio.
+
+```
+ssh -T git@github.com
+```
+
+Si responde `Hi nicodelos24! You've successfully authenticated...`, la clave está bien y no hay que
+tocar nada más. Si dice `Permission denied (publickey)`, falta instalarla en esa computadora.
+
+<details>
+<summary>Instalar la clave en una máquina nueva</summary>
+
+**Linux y macOS**
+
+```bash
+ls ~/.ssh/id_ed25519 2>/dev/null || ssh-keygen -t ed25519 -C "nicodelos24@gmail.com"
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+cat ~/.ssh/id_ed25519.pub
+```
+
+Copiar la clave que imprime y pegarla en GitHub, en *Settings → SSH and GPG keys → New SSH key*.
+
+**Windows (PowerShell, sin administrador)**
+
+```powershell
+if (-not (Test-Path "$env:USERPROFILE\.ssh\id_ed25519")) {
+  ssh-keygen -t ed25519 -C "nicodelos24@gmail.com"
+}
+Get-Service ssh-agent | Set-Service -StartupType Automatic
+Start-Service ssh-agent
+ssh-add "$env:USERPROFILE\.ssh\id_ed25519"
+Get-Content "$env:USERPROFILE\.ssh\id_ed25519.pub"
+```
+
+**Nunca copiar el archivo `id_ed25519` entre máquinas.** Solo la clave pública (`.pub`), que es la que
+se registra en GitHub. La privada se genera en cada computadora por separado.
+
+</details>
+
+**Si el remoto quedó en HTTPS por error**, se corrige una sola vez y vuelve a quedar bien:
+
+```bash
+git remote set-url origin git@github.com:nicodelos24/Presupuesto-v2.git
+```
+
+**Aviso al momento de escribir esto:** el remoto del repositorio estaba en
+`https://github.com/nicodelos24/Presupuesto-v2.git`, no en SSH como dice la bitácora de `T01`. Se deja
+constar acá porque es la clase de cosa que hace perder una tarde: el síntoma es que la PC con Linux
+funciona perfecto y la de Windows pide credenciales, y parece un problema de la clave cuando el
+problema es que cada máquina resuelve la URL como puede.
+
 ---
 
 ## Índice de tareas
@@ -149,6 +210,11 @@ Completada.
 - Remote configurado por SSH desde el inicio.
 - **No se migró `index.zip`**: es una copia empaquetada del sitio publicado y solo genera riesgo de
   desincronización.
+
+> **Corrección posterior:** aunque acá se dejó asentado que el remoto quedó en SSH, al revisar el
+> repositorio en 2026-10-05 se encontró que `origin` estaba en
+> `https://github.com/nicodelos24/Presupuesto-v2.git`. La convención SSH sigue siendo la correcta y
+> está documentada en la cabecera de este archivo, pero el remoto real había quedado en HTTPS.
 
 ### Diferencias con la v1
 
