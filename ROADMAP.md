@@ -39,13 +39,13 @@ dependencias, sin backend y sin base de datos. Todo vive en el `localStorage` de
 
 **Lo que impide venderla:**
 
-| Limitación | Impacto comercial |
-|---|---|
-| Los datos son del navegador, no de una cuenta | No se puede compartir entre empleados, no se puede respaldar, no se puede recuperar si se borra el navegador. |
-| Una sola "empresa" implícita | No hay separación entre locales: dos negocios distintos no pueden coexistir. |
-| No hay pedidos, clientes, entregas ni proveedores | Es un cosificador, no un sistema de gestión. Falta la mitad del flujo real de un local. |
-| No hay control de compras ni actualización de costos | El costo de un producto queda congelado y el margen se vuelve falso. |
-| Sin diseño de producto, sin responsive real | Se ve como un ejercicio, no como algo que un comercio pueda poner en el mostrador. |
+| Limitación                                           | Impacto comercial                                                                                             |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| Los datos son del navegador, no de una cuenta        | No se puede compartir entre empleados, no se puede respaldar, no se puede recuperar si se borra el navegador. |
+| Una sola "empresa" implícita                         | No hay separación entre locales: dos negocios distintos no pueden coexistir.                                  |
+| No hay pedidos, clientes, entregas ni proveedores    | Es un cosificador, no un sistema de gestión. Falta la mitad del flujo real de un local.                       |
+| No hay control de compras ni actualización de costos | El costo de un producto queda congelado y el margen se vuelve falso.                                          |
+| Sin diseño de producto, sin responsive real          | Se ve como un ejercicio, no como algo que un comercio pueda poner en el mostrador.                            |
 
 **Conclusión:** la v1 no se va a "arreglar" hasta que sea un producto. Se conserva su lógica de
 cálculo (que es buena y testeable) y se reconstruye la arquitectura alrededor.
@@ -127,24 +127,24 @@ Cambiar la capa de datos más adelante es un proyecto entero.
 
 ### 4.1 Recomendación general
 
-| Capa | Elección | Motivo |
-|---|---|---|
-| **Datos + Auth** | **Supabase** (Postgres + Auth + Storage) | Resuelve multi-cuenta, aislamiento por negocio, imágenes y backups sin mantener servidores. El plan gratuito alcanza para empezar a vender. |
-| **Frontend** | **Vite + TypeScript + Svelte 5** | Componentes reales, tipado para los cálculos, build optimizado, y un solo concepto mental en vez de la mezcla de vanilla + jQuery mental de la v1. |
-| **Estilos** | **Tailwind CSS** + tokens propios de diseño | Consistencia visual rápida y un sistema de diseño documentado y extensible. |
-| **Iconos** | **Lucide** | Un set coherente, nada de emojis como botones (la v1 usa ✏️ 🗑️ ❌). |
-| **Calendario** | **FullCalendar** o calendario propio | Ver 4.3. |
-| **Despliegue** | **Cloudflare Pages** (frontend, gratis, repo privado) + **Supabase** (datos) | Despliegue automático desde un repositorio **privado**, sin servidores propios ni límite de ancho de banda. Ver 4.6. |
-| **Pagos (futuro)** | Stripe / Mercado Pago | Fase posterior a la validación con clientes reales. |
+| Capa               | Elección                                                                     | Motivo                                                                                                                                             |
+| ------------------ | ---------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Datos + Auth**   | **Supabase** (Postgres + Auth + Storage)                                     | Resuelve multi-cuenta, aislamiento por negocio, imágenes y backups sin mantener servidores. El plan gratuito alcanza para empezar a vender.        |
+| **Frontend**       | **Vite + TypeScript + Svelte 5**                                             | Componentes reales, tipado para los cálculos, build optimizado, y un solo concepto mental en vez de la mezcla de vanilla + jQuery mental de la v1. |
+| **Estilos**        | **Tailwind CSS** + tokens propios de diseño                                  | Consistencia visual rápida y un sistema de diseño documentado y extensible.                                                                        |
+| **Iconos**         | **Lucide**                                                                   | Un set coherente, nada de emojis como botones (la v1 usa ✏️ 🗑️ ❌).                                                                                |
+| **Calendario**     | **FullCalendar** o calendario propio                                         | Ver 4.3.                                                                                                                                           |
+| **Despliegue**     | **Cloudflare Pages** (frontend, gratis, repo privado) + **Supabase** (datos) | Despliegue automático desde un repositorio **privado**, sin servidores propios ni límite de ancho de banda. Ver 4.6.                               |
+| **Pagos (futuro)** | Stripe / Mercado Pago                                                        | Fase posterior a la validación con clientes reales.                                                                                                |
 
 ### 4.2 Por qué Supabase y no otras opciones
 
-| Opción | Ventajas | Problemas |
-|---|---|---|
-| **Supabase** (recomendado) | Auth lista, Postgres real, **Row Level Security** para aislar locales, Storage para imágenes, dashboard, plan gratuito. | Base de datos relacional: hay que aprender SQL y las reglas de RLS son sutiles. |
-| **Firebase** | Muy simple de empezar, sync en tiempo real. | Modelo de documentos: consultas relacionales (pedidos con cliente + líneas) son frágiles y caras. Cambiar después es muy costoso. |
-| **Node + Postgres propio** | Control total. | Hay que mantener servidores, backups, TLS, monitoreo. Un desarrollador solo no debería. |
-| **Solo localStorage** (v1) | Cero costo, cero mantenimiento. | No hay cuentas, no hay datos compartidos, no hay venta posible. Descartado. |
+| Opción                     | Ventajas                                                                                                                | Problemas                                                                                                                         |
+| -------------------------- | ----------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| **Supabase** (recomendado) | Auth lista, Postgres real, **Row Level Security** para aislar locales, Storage para imágenes, dashboard, plan gratuito. | Base de datos relacional: hay que aprender SQL y las reglas de RLS son sutiles.                                                   |
+| **Firebase**               | Muy simple de empezar, sync en tiempo real.                                                                             | Modelo de documentos: consultas relacionales (pedidos con cliente + líneas) son frágiles y caras. Cambiar después es muy costoso. |
+| **Node + Postgres propio** | Control total.                                                                                                          | Hay que mantener servidores, backups, TLS, monitoreo. Un desarrollador solo no debería.                                           |
+| **Solo localStorage** (v1) | Cero costo, cero mantenimiento.                                                                                         | No hay cuentas, no hay datos compartidos, no hay venta posible. Descartado.                                                       |
 
 > **El punto no negociable: Row Level Security.** Si dos locales comparten base, cada consulta debe
 > filtrar por `store_id`. Si se olvida en una sola tabla, un local ve los datos de otro. Es el riesgo
@@ -169,6 +169,7 @@ sepamos qué interacción necesita realmente el usuario. Es una decisión revers
 
 La v1 guarda imágenes en Base64 dentro de `localStorage` (bug documentado: agota la cuota y falla
 en silencio). En v2 van a **Supabase Storage**, con:
+
 - Redimensionado y compresión en el cliente antes de subir (máximo ~1200 px, WebP).
 - Carpeta por negocio: `stores/{store_id}/products/...`.
 - La app guarda solo la URL en la base.
@@ -188,11 +189,11 @@ el modelo de datos basado en arrays y los `alert()` como única validación.
 GitHub Pages exige que el repositorio sea **público**, y eso no sirve: el código de un producto que se
 vende es la parte que menos se quiere exponer.
 
-| Opción | Repo privado en plan gratuito | Notas |
-|---|---|---|
-| **Cloudflare Pages** (recomendada) | Sí | Sin límite de ancho de banda, se conecta al repo por GitHub, certificado automático, despliegue en cada push. |
-| Netlify | Sí | Límite de 100 GB/mes de ancho de banda. |
-| Vercel | Sí | Suficiente, pero con límites más estrictos en el plan gratuito. |
+| Opción                             | Repo privado en plan gratuito | Notas                                                                                                         |
+| ---------------------------------- | ----------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| **Cloudflare Pages** (recomendada) | Sí                            | Sin límite de ancho de banda, se conecta al repo por GitHub, certificado automático, despliegue en cada push. |
+| Netlify                            | Sí                            | Límite de 100 GB/mes de ancho de banda.                                                                       |
+| Vercel                             | Sí                            | Suficiente, pero con límites más estrictos en el plan gratuito.                                               |
 
 Se adopta **Cloudflare Pages**. Con esto el repositorio puede ser privado desde el primer día.
 
@@ -204,10 +205,10 @@ Se adopta **Cloudflare Pages**. Con esto el repositorio puede ser privado desde 
 Es la decisión que hace posible cobrar una cuota mensual. Se creó la aplicación para vender el
 **mantimiento**, no el código.
 
-| Modelo | Cómo funciona | Ventaja | Problema |
-|---|---|---|---|
-| **Un proyecto por cliente** (recomendado) | Cada negocio que paga tiene su propio proyecto de Supabase y su propia URL | Aislamiento total, se le puede entregar o revender, se puede suspender o borrar sin tocar los demás, migrar es trivial | Hay que actualizar el proyecto cuando sale una versión nueva |
-| **Un proyecto compartido** con `store_id` | Todos los clientes en una sola base | Más simple de actualizar | Una RLS mal escrita filtra datos entre clientes; no se puede dar de baja a uno sin riesgo |
+| Modelo                                    | Cómo funciona                                                              | Ventaja                                                                                                                | Problema                                                                                  |
+| ----------------------------------------- | -------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| **Un proyecto por cliente** (recomendado) | Cada negocio que paga tiene su propio proyecto de Supabase y su propia URL | Aislamiento total, se le puede entregar o revender, se puede suspender o borrar sin tocar los demás, migrar es trivial | Hay que actualizar el proyecto cuando sale una versión nueva                              |
+| **Un proyecto compartido** con `store_id` | Todos los clientes en una sola base                                        | Más simple de actualizar                                                                                               | Una RLS mal escrita filtra datos entre clientes; no se puede dar de baja a uno sin riesgo |
 
 **Modelo comercial resultante:**
 
@@ -225,15 +226,15 @@ mes, y el resto es tu trabajo.
 
 Con los precios públicos de Supabase (verificado en su página de precios):
 
-| Concepto | Plan gratuito | Plan Pro |
-|---|---|---|
-| Precio | **0 USD** | **25 USD/mes por proyecto** |
-| Tamaño de base | 500 MB | 8 GB (luego 0,125 USD/GB) |
-| Archivos | 1 GB | 100 GB |
-| Usuarios activos | 50.000 | 100.000 |
-| Salida de datos | 5 GB/mes | 250 GB/mes |
-| Backups | No | Diarios, 7 días |
-| **Pausa por inactividad** | **Sí, a la semana** | No |
+| Concepto                  | Plan gratuito       | Plan Pro                    |
+| ------------------------- | ------------------- | --------------------------- |
+| Precio                    | **0 USD**           | **25 USD/mes por proyecto** |
+| Tamaño de base            | 500 MB              | 8 GB (luego 0,125 USD/GB)   |
+| Archivos                  | 1 GB                | 100 GB                      |
+| Usuarios activos          | 50.000              | 100.000                     |
+| Salida de datos           | 5 GB/mes            | 250 GB/mes                  |
+| Backups                   | No                  | Diarios, 7 días             |
+| **Pausa por inactividad** | **Sí, a la semana** | No                          |
 
 **Advertencia operativa:** los proyectos gratuitos **se pausan a la semana de inactividad**. Mientras
 se desarrolla no molesta (se activa con un clic). Pero en cuanto un cliente real use el servicio, su
@@ -241,12 +242,12 @@ proyecto tiene que estar en plan Pro, porque si se pausa un negocio pierde el ac
 
 **Presupuesto del proyecto:**
 
-| Fase | Costo |
-|---|---|
-| Desarrollo (Fases 0 a 5) | **0 USD** |
-| Primer cliente | 25 USD/mes (el plan Pro de su proyecto) |
-| Hosting del frontend | **0 USD** (Cloudflare Pages) |
-| Dominio propio | ~10 USD/año (opcional, se puede usar el subdominio gratis) |
+| Fase                     | Costo                                                      |
+| ------------------------ | ---------------------------------------------------------- |
+| Desarrollo (Fases 0 a 5) | **0 USD**                                                  |
+| Primer cliente           | 25 USD/mes (el plan Pro de su proyecto)                    |
+| Hosting del frontend     | **0 USD** (Cloudflare Pages)                               |
+| Dominio propio           | ~10 USD/año (opcional, se puede usar el subdominio gratis) |
 
 Es decir: **se puede construir y operar el primer cliente sin gastar un peso**, y recién cuando
 aparezcan ingresos se paga la infraestructura del cliente, no la del desarrollo.
@@ -256,12 +257,12 @@ aparezcan ingresos se paga la infraestructura del cliente, no la del desarrollo.
 La máquina de desarrollo tiene un **Intel Atom N450 (2010)**, sin instrucciones modernas de CPU. Hay
 consecuencias concretas y ya verificadas:
 
-| Herramienta | Estado | Acción |
-|---|---|---|
-| **Supabase CLI** | No arranca (`Illegal instruction`) | **No se usa.** Las migraciones se aplican desde el editor SQL del panel web. Los archivos `.sql` se versionan en el repo para tener el historial. |
-| **Node 20, npm, esbuild, Vite** | Funcionan (esbuild 0.28.2, Vite 6.4.3) | Verificado con un build de producción real. |
-| **Tailwind 3.4** | Funciona | Se eligió la versión 3 porque la 4 depende de un binario nativo (lightningcss) que puede no arrancar en esta CPU. |
-| **Tests (Vitest)** | Funcionan | 48 tests en unos 90 segundos. |
+| Herramienta                     | Estado                                 | Acción                                                                                                                                            |
+| ------------------------------- | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Supabase CLI**                | No arranca (`Illegal instruction`)     | **No se usa.** Las migraciones se aplican desde el editor SQL del panel web. Los archivos `.sql` se versionan en el repo para tener el historial. |
+| **Node 20, npm, esbuild, Vite** | Funcionan (esbuild 0.28.2, Vite 6.4.3) | Verificado con un build de producción real.                                                                                                       |
+| **Tailwind 3.4**                | Funciona                               | Se eligió la versión 3 porque la 4 depende de un binario nativo (lightningcss) que puede no arrancar en esta CPU.                                 |
+| **Tests (Vitest)**              | Funcionan                              | 48 tests en unos 90 segundos.                                                                                                                     |
 
 Tiempos reales de esta máquina, medidos en la Fase 0: `npm install` unos 5 minutos, la suite de
 tests unos 90 segundos, `svelte-check` unos 2 minutos y el build de producción 1 minuto 41 segundos.
@@ -280,10 +281,10 @@ Borrador inicial. Los nombres en `snake_case` para Postgres.
 
 ### Identidad y cuentas
 
-| Tabla | Campos | Notas |
-|---|---|---|
-| `stores` | `id`, `name`, `slug`, `currency` (UYU), `plan`, `created_at` | El negocio cliente. Unidad de aislamiento. |
-| `users` | `id` (de Supabase Auth), `email`, `full_name`, `created_at` | La persona. |
+| Tabla           | Campos                                                           | Notas                                                           |
+| --------------- | ---------------------------------------------------------------- | --------------------------------------------------------------- |
+| `stores`        | `id`, `name`, `slug`, `currency` (UYU), `plan`, `created_at`     | El negocio cliente. Unidad de aislamiento.                      |
+| `users`         | `id` (de Supabase Auth), `email`, `full_name`, `created_at`      | La persona.                                                     |
 | `store_members` | `store_id`, `user_id`, `role` (`owner` \| `staff`), `created_at` | Une persona y negocio. Un dueño puede estar en varios negocios. |
 
 > Roles: el dueño ve facturación y configuración; el empleado ve y opera pero no borra ni gestiona
@@ -291,30 +292,30 @@ Borrador inicial. Los nombres en `snake_case` para Postgres.
 
 ### Catálogo
 
-| Tabla | Campos |
-|---|---|
-| `categories` | `id`, `store_id`, `name`, `kind` (`product` \| `ingredient`) |
-| `units` | `code`, `name`, `kind` (`weight` \| `volume` \| `count`), `factor` | Catálogo global de unidades, no por negocio. |
-| `ingredients` | `id`, `store_id`, `name`, `unit_id`, `purchase_unit`, `purchase_size`, `current_cost`, `supplier_id`, `is_active` |
-| `recipes` | `id`, `store_id`, `product_id` | |
-| `recipe_items` | `id`, `recipe_id`, `ingredient_id`, `quantity`, `unit_id` |
-| `products` | `id`, `store_id`, `name`, `description`, `category_id`, `price`, `cost`, `margin_pct`, `is_active` |
-| `suppliers` | `id`, `store_id`, `name`, `contact`, `notes` |
+| Tabla          | Campos                                                                                                            |
+| -------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `categories`   | `id`, `store_id`, `name`, `kind` (`product` \| `ingredient`)                                                      |
+| `units`        | `code`, `name`, `kind` (`weight` \| `volume` \| `count`), `factor`                                                | Catálogo global de unidades, no por negocio. |
+| `ingredients`  | `id`, `store_id`, `name`, `unit_id`, `purchase_unit`, `purchase_size`, `current_cost`, `supplier_id`, `is_active` |
+| `recipes`      | `id`, `store_id`, `product_id`                                                                                    |                                              |
+| `recipe_items` | `id`, `recipe_id`, `ingredient_id`, `quantity`, `unit_id`                                                         |
+| `products`     | `id`, `store_id`, `name`, `description`, `category_id`, `price`, `cost`, `margin_pct`, `is_active`                |
+| `suppliers`    | `id`, `store_id`, `name`, `contact`, `notes`                                                                      |
 
 ### Comercial
 
-| Tabla | Campos |
-|---|---|
-| `customers` | `id`, `store_id`, `name`, `phone`, `email`, `address`, `notes` |
-| `orders` | `id`, `store_id`, `customer_id`, `status`, `order_date`, `delivery_date`, `delivery_time`, `payment_status`, `total`, `notes` |
-| `order_items` | `id`, `order_id`, `product_id`, `quantity`, `unit_price`, `cost_snapshot`, `subtotal` |
-| `deliveries` | `id`, `store_id`, `order_id`, `address`, `scheduled_at`, `status`, `delivered_at` |
+| Tabla         | Campos                                                                                                                        |
+| ------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `customers`   | `id`, `store_id`, `name`, `phone`, `email`, `address`, `notes`                                                                |
+| `orders`      | `id`, `store_id`, `customer_id`, `status`, `order_date`, `delivery_date`, `delivery_time`, `payment_status`, `total`, `notes` |
+| `order_items` | `id`, `order_id`, `product_id`, `quantity`, `unit_price`, `cost_snapshot`, `subtotal`                                         |
+| `deliveries`  | `id`, `store_id`, `order_id`, `address`, `scheduled_at`, `status`, `delivered_at`                                             |
 
 ### Compras
 
-| Tabla | Campos |
-|---|---|
-| `purchases` | `id`, `store_id`, `supplier_id`, `purchased_at`, `total`, `notes` |
+| Tabla            | Campos                                                                            |
+| ---------------- | --------------------------------------------------------------------------------- |
+| `purchases`      | `id`, `store_id`, `supplier_id`, `purchased_at`, `total`, `notes`                 |
 | `purchase_items` | `id`, `purchase_id`, `ingredient_id`, `quantity`, `unit_id`, `unit_cost`, `total` |
 
 ### Decisiones de modelado importantes
@@ -423,41 +424,41 @@ rotos.
 
 Mapeo entre los problemas documentados en `DOCUMENTACION.md` y dónde se resuelven.
 
-| # | Problema | Se resuelve en |
-|---|---|---|
-| 9.1 | Producto con costo manual imposible de guardar | Fase 0 (modelo de datos nuevo) |
-| 9.2 | Editar un ingrediente no recalcula los productos | **Fase 3** (compras + recálculo en cascada) |
-| 9.3 | Nombre del ingrediente como identidad | Fase 0 (`id` en todo) |
-| 9.4 | Caso 2 del cálculo da números absurdos | Fase 0 (motor reescrito + tests) |
-| 9.5 | `QuotaExceededError` sin manejar | Fase 2 (Supabase Storage) |
-| 9.6 | `JSON.parse` sin `try/catch` | Fase 0 (nunca más localStorage) |
-| 9.7 | Total calculado por dos caminos | Fase 0 (funciones puras) |
-| 9.8 | Fila del inventario con celda de más | Fase 1 (componente de tabla) |
-| 9.9 | Edición con precio y porcentaje a la vez | Fase 1 (componente de formulario) |
-| 9.10 | `innerHTML` sin sanitizar | Fase 0 (Svelte escapa por defecto) |
-| 9.11 | `id` por timestamp | Fase 0 (UUID) |
-| 9.12 | `actualizarOpcionesUnidad` duplicada | Fase 0 (una función) |
-| 9.13 | Variable `gananciaTotal` muerta | Fase 0 |
-| 9.14 | Sombreado de `total` | Fase 0 (TypeScript lo marca) |
-| 9.15 | Sin modo edición visible ni cancelar | Fase 1 |
-| 9.16-9.19 | CSS duplicado, título, `index.zip` | Fase 0 y 1 |
-| 9.20 | Anchos que no coinciden | Fase 1 (sistema de diseño) |
+| #         | Problema                                         | Se resuelve en                              |
+| --------- | ------------------------------------------------ | ------------------------------------------- |
+| 9.1       | Producto con costo manual imposible de guardar   | Fase 0 (modelo de datos nuevo)              |
+| 9.2       | Editar un ingrediente no recalcula los productos | **Fase 3** (compras + recálculo en cascada) |
+| 9.3       | Nombre del ingrediente como identidad            | Fase 0 (`id` en todo)                       |
+| 9.4       | Caso 2 del cálculo da números absurdos           | Fase 0 (motor reescrito + tests)            |
+| 9.5       | `QuotaExceededError` sin manejar                 | Fase 2 (Supabase Storage)                   |
+| 9.6       | `JSON.parse` sin `try/catch`                     | Fase 0 (nunca más localStorage)             |
+| 9.7       | Total calculado por dos caminos                  | Fase 0 (funciones puras)                    |
+| 9.8       | Fila del inventario con celda de más             | Fase 1 (componente de tabla)                |
+| 9.9       | Edición con precio y porcentaje a la vez         | Fase 1 (componente de formulario)           |
+| 9.10      | `innerHTML` sin sanitizar                        | Fase 0 (Svelte escapa por defecto)          |
+| 9.11      | `id` por timestamp                               | Fase 0 (UUID)                               |
+| 9.12      | `actualizarOpcionesUnidad` duplicada             | Fase 0 (una función)                        |
+| 9.13      | Variable `gananciaTotal` muerta                  | Fase 0                                      |
+| 9.14      | Sombreado de `total`                             | Fase 0 (TypeScript lo marca)                |
+| 9.15      | Sin modo edición visible ni cancelar             | Fase 1                                      |
+| 9.16-9.19 | CSS duplicado, título, `index.zip`               | Fase 0 y 1                                  |
+| 9.20      | Anchos que no coinciden                          | Fase 1 (sistema de diseño)                  |
 
 ---
 
 ## 8. Riesgos y mitigaciones
 
-| Riesgo | Probabilidad | Impacto | Mitigación |
-|---|---|---|---|
-| **Fuga de datos entre negocios** (RLS mal aplicada) | Media | Catastrófico | RLS como regla única por `store_id`, tests de aislamiento en CI, revisar cada tabla nueva. |
-| Cuota / costo de Supabase con muchos clientes | Media | Medio | Empezar con planes con límites claros, medir antes de crecer, exportable siempre. |
-| Imágenes sin optimizar | Alta | Medio | Compresión en cliente antes de subir. |
-| Scope creep (todo a la vez) | Alta | Alto | Una fase a la vez, cada una usable de punta a punta. |
-| Que nadie pague | Media | Alto | Validar con 2 o 3 locales piloto antes de la Fase 6. Un piloto real vale más que cualquier feature. |
-| Datos del cliente atados a nuestra plataforma | Media | Alto | Exportación en un clic, sin condiciones, en formato abierto. |
-| Rewrites excesivos | Media | Medio | Un solo rewrite grande (Fase 0), después solo incremental. |
-| Ley 18.331 (datos personales de los clientes del local) | Media | Medio | Aviso de privacidad, consentimiento, derecho de supresión. |
-| Dependencia de un solo proveedor | Baja | Alto | Postgres estándar, exportación a CSV/JSON: se puede ir a otro proveedor. |
+| Riesgo                                                  | Probabilidad | Impacto      | Mitigación                                                                                          |
+| ------------------------------------------------------- | ------------ | ------------ | --------------------------------------------------------------------------------------------------- |
+| **Fuga de datos entre negocios** (RLS mal aplicada)     | Media        | Catastrófico | RLS como regla única por `store_id`, tests de aislamiento en CI, revisar cada tabla nueva.          |
+| Cuota / costo de Supabase con muchos clientes           | Media        | Medio        | Empezar con planes con límites claros, medir antes de crecer, exportable siempre.                   |
+| Imágenes sin optimizar                                  | Alta         | Medio        | Compresión en cliente antes de subir.                                                               |
+| Scope creep (todo a la vez)                             | Alta         | Alto         | Una fase a la vez, cada una usable de punta a punta.                                                |
+| Que nadie pague                                         | Media        | Alto         | Validar con 2 o 3 locales piloto antes de la Fase 6. Un piloto real vale más que cualquier feature. |
+| Datos del cliente atados a nuestra plataforma           | Media        | Alto         | Exportación en un clic, sin condiciones, en formato abierto.                                        |
+| Rewrites excesivos                                      | Media        | Medio        | Un solo rewrite grande (Fase 0), después solo incremental.                                          |
+| Ley 18.331 (datos personales de los clientes del local) | Media        | Medio        | Aviso de privacidad, consentimiento, derecho de supresión.                                          |
+| Dependencia de un solo proveedor                        | Baja         | Alto         | Postgres estándar, exportación a CSV/JSON: se puede ir a otro proveedor.                            |
 
 ---
 

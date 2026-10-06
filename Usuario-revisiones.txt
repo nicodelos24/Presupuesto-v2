@@ -1,0 +1,9 @@
+Referencias: 
+. Cosas que quiero implementar o que he probado
+x Cosas que ya se probaron e implementaron ya corroboradas por el usuario
+- Cosas que se quitan
++ Cosas que se agregaron pero aún no han sido revisadas
+
+. Actualmente veo que al agregar un producto sólo puedo agregar precio por unidad, y eso no está bien, porque 
+muchas veces se consigue precio al por mayor, y entonces en ese caso el costo por unidad es lo que se calcula
+

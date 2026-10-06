@@ -25,14 +25,14 @@ Si el sistema no responde las seis en ese orden, es un cuaderno digital, no una 
 
 ## 2. Las pantallas y para que existe cada una
 
-| Pantalla | Pregunta que responde | Tiene que poder mostrar |
-|---|---|---|
-| **Inicio** | Que hago hoy? | Pedidos del dia, entregas, a cuanto se cobra hoy, alertas de stock bajo |
-| **Recetario** | Que me cuesta esto y a cuanto lo vendo? | Lista de productos con foto, costo, precio, margen y estado del stock |
-| **Inventario** | Que compro y a cuanto? | Insumos, proveedor, stock teorico, costo por unidad, historial de compras |
-| **Agenda** | Que tengo que producir y entregar? | Calendario con pedidos por fecha, carga por dia, vista "para hoy" |
-| **Pedidos** | Quien me compro que? | Pedidos con cliente, estado, pago, detalle |
-| **Mas** | Como configuro el negocio? | Negocio, equipo, proveedores, gastos, exportar datos |
+| Pantalla       | Pregunta que responde                   | Tiene que poder mostrar                                                   |
+| -------------- | --------------------------------------- | ------------------------------------------------------------------------- |
+| **Inicio**     | Que hago hoy?                           | Pedidos del dia, entregas, a cuanto se cobra hoy, alertas de stock bajo   |
+| **Recetario**  | Que me cuesta esto y a cuanto lo vendo? | Lista de productos con foto, costo, precio, margen y estado del stock     |
+| **Inventario** | Que compro y a cuanto?                  | Insumos, proveedor, stock teorico, costo por unidad, historial de compras |
+| **Agenda**     | Que tengo que producir y entregar?      | Calendario con pedidos por fecha, carga por dia, vista "para hoy"         |
+| **Pedidos**    | Quien me compro que?                    | Pedidos con cliente, estado, pago, detalle                                |
+| **Mas**        | Como configuro el negocio?              | Negocio, equipo, proveedores, gastos, exportar datos                      |
 
 ### Cambio de navegacion propuesto
 
@@ -76,14 +76,14 @@ la diferencia entre una app que se usa y una que se abandona.
 
 ### 3.2 Lo que hay que mostrar en la lista de productos
 
-| Dato | Por que importa |
-|---|---|
-| Foto | Reconocer el producto de un vistazo, sin leer |
-| Nombre | Identificacion |
-| Costo | Lo que sale producirlo |
-| Precio | Lo que se cobra |
-| Margen % | Lo que queda |
-| Insumos en faltante | Si la receta no se puede Armar hoy |
+| Dato                | Por que importa                               |
+| ------------------- | --------------------------------------------- |
+| Foto                | Reconocer el producto de un vistazo, sin leer |
+| Nombre              | Identificacion                                |
+| Costo               | Lo que sale producirlo                        |
+| Precio              | Lo que se cobra                               |
+| Margen %            | Lo que queda                                  |
+| Insumos en faltante | Si la receta no se puede Armar hoy            |
 
 ### 3.3 Reglas
 
@@ -133,11 +133,11 @@ todo lo agendado. Eso es lo que un cuaderno no hace y lo que justifica pagar una
 
 ### 4.3 Vistas
 
-| Vista | Para que |
-|---|---|
-| **Dia** | Operacion diaria, que hago hoy |
-| **Semana** | Ver carga y detectar dias saturados |
-| **Mes** | Planificacion y comparacion de meses |
+| Vista      | Para que                             |
+| ---------- | ------------------------------------ |
+| **Dia**    | Operacion diaria, que hago hoy       |
+| **Semana** | Ver carga y detectar dias saturados  |
+| **Mes**    | Planificacion y comparacion de meses |
 
 Ademas, una **vista de lista** con "para hoy" y "para manana", que es lo mas consultado.
 
@@ -200,13 +200,13 @@ que habia guardado**.
 
 Las fotos van a **Supabase Storage**, no a la base de datos. En la base solo se guarda la URL.
 
-| Aspecto | Decision |
-|---|---|
-| Donde se guardan | Supabase Storage, en una carpeta por negocio |
-| Tamano maximo | Se redimensiona la imagen en el celular antes de subir: lado mayor 1200 px |
-| Formato | WebP (o JPEG si no se soporta) |
-| Peso esperado | 80 a 250 KB por foto |
-| Cuantas entran en el plan gratuito | 1 GB de Storage = **unas 4.000 a 10.000 fotos** |
+| Aspecto                            | Decision                                                                   |
+| ---------------------------------- | -------------------------------------------------------------------------- |
+| Donde se guardan                   | Supabase Storage, en una carpeta por negocio                               |
+| Tamano maximo                      | Se redimensiona la imagen en el celular antes de subir: lado mayor 1200 px |
+| Formato                            | WebP (o JPEG si no se soporta)                                             |
+| Peso esperado                      | 80 a 250 KB por foto                                                       |
+| Cuantas entran en el plan gratuito | 1 GB de Storage = **unas 4.000 a 10.000 fotos**                            |
 
 **Conclusion: no es un problema de espacio.** 1 GB alcanza para el caso de veinte mil insumos y productos
 con foto.
@@ -222,14 +222,14 @@ con foto.
 
 ## 8. Que se construye primero y por que
 
-| Orden | Que | Razon |
-|---|---|---|
-| 1 | **Recetario** con costeo en vivo | Es la funcion principal. Sin esto el sistema no sirve. |
-| 2 | **Agenda** con produccion planificada | Es lo que da valor real y lo que justifica la cuota. |
-| 3 | **Inventario** conectado al recetario | Ya esta la pantalla; falta conectarla. |
-| 4 | **Cuentas de usuario** y persistencia | Sin esto nada se guarda entre dispositivos. |
-| 5 | Pedidos, clientes, entregas | Vienen sobre las anteriores. |
-| 6 | Gastos y resultado mensual | Cierra el circulo financiero. |
+| Orden | Que                                   | Razon                                                  |
+| ----- | ------------------------------------- | ------------------------------------------------------ |
+| 1     | **Recetario** con costeo en vivo      | Es la funcion principal. Sin esto el sistema no sirve. |
+| 2     | **Agenda** con produccion planificada | Es lo que da valor real y lo que justifica la cuota.   |
+| 3     | **Inventario** conectado al recetario | Ya esta la pantalla; falta conectarla.                 |
+| 4     | **Cuentas de usuario** y persistencia | Sin esto nada se guarda entre dispositivos.            |
+| 5     | Pedidos, clientes, entregas           | Vienen sobre las anteriores.                           |
+| 6     | Gastos y resultado mensual            | Cierra el circulo financiero.                          |
 
 ### Sobre la pregunta de construir antes o despues del servidor
 
@@ -248,14 +248,14 @@ tecnicos. Por eso el orden propuesto mete las cuentas antes de pedidos y entrega
 
 ## 9. Decisiones que hay que tomar
 
-| Decision | Propuesta | Por que |
-|---|---|---|
-| Fecha de la agenda | Fecha de **entrega** por defecto, con fecha de produccion opcional | Es lo que el cliente pide: "para el viernes" |
-| Donde se calcula el costo de un pedido | Al confirmar, y se congela | Un pedido viejo debe seguir cuadrando |
-| Margen sobre costo o sobre precio | Sobre el **costo** (como en la v1) | Es como piensa el dueño: "quiero ganar el 60%" |
-| Moneda | UYU, configurable por negocio | Hoy es fijo |
-| Cantidades fraccionadas | Permitidas (media torta, 250 g) | Los locales de reposteria venden por peso |
-| Stock | Se calcula por **produccion comprometida**, no por ventas | El dueño produce antes de vender |
+| Decision                               | Propuesta                                                          | Por que                                        |
+| -------------------------------------- | ------------------------------------------------------------------ | ---------------------------------------------- |
+| Fecha de la agenda                     | Fecha de **entrega** por defecto, con fecha de produccion opcional | Es lo que el cliente pide: "para el viernes"   |
+| Donde se calcula el costo de un pedido | Al confirmar, y se congela                                         | Un pedido viejo debe seguir cuadrando          |
+| Margen sobre costo o sobre precio      | Sobre el **costo** (como en la v1)                                 | Es como piensa el dueño: "quiero ganar el 60%" |
+| Moneda                                 | UYU, configurable por negocio                                      | Hoy es fijo                                    |
+| Cantidades fraccionadas                | Permitidas (media torta, 250 g)                                    | Los locales de reposteria venden por peso      |
+| Stock                                  | Se calcula por **produccion comprometida**, no por ventas          | El dueño produce antes de vender               |
 
 ---
 
@@ -284,15 +284,15 @@ pedidos son donde se reality; los gastos son donde se cierra la cuenta.
 Incorporados despues de definir el calendario de produccion. El detalle tecnico de cada uno esta en
 [MODELO_DATOS.md](MODELO_DATOS.md).
 
-| Modulo | Que resuelve | Documentado en |
-|---|---|---|
-| **Llegadas de proveedores** | Saber que llega, cuando y si alcanza para los pedidos de la semana | MODELO_DATOS 3 |
-| **Stock por movimientos** | Que el inventario se actualice solo al comprar y al producir | MODELO_DATOS 1 |
-| **Recetas de recetas** | Productos preparados (tortillas, salsas) que se venden y se usan en otras recetas | MODELO_DATOS 2 |
-| **Conteos y ajustes** | Que los numeros sean confiables | MODELO_DATOS 4 |
-| **Avisos y recordatorios** | Pedidos proximos, faltantes, stock bajo, conteo mensual | MODELO_DATOS 6 |
-| **Graficas** | Resultado del mes, productos y clientes | MODELO_DATOS 7 |
-| **Listas para imprimir** | Compras al proveedor y comanda de produccion | MODELO_DATOS 8 |
+| Modulo                      | Que resuelve                                                                      | Documentado en |
+| --------------------------- | --------------------------------------------------------------------------------- | -------------- |
+| **Llegadas de proveedores** | Saber que llega, cuando y si alcanza para los pedidos de la semana                | MODELO_DATOS 3 |
+| **Stock por movimientos**   | Que el inventario se actualice solo al comprar y al producir                      | MODELO_DATOS 1 |
+| **Recetas de recetas**      | Productos preparados (tortillas, salsas) que se venden y se usan en otras recetas | MODELO_DATOS 2 |
+| **Conteos y ajustes**       | Que los numeros sean confiables                                                   | MODELO_DATOS 4 |
+| **Avisos y recordatorios**  | Pedidos proximos, faltantes, stock bajo, conteo mensual                           | MODELO_DATOS 6 |
+| **Graficas**                | Resultado del mes, productos y clientes                                           | MODELO_DATOS 7 |
+| **Listas para imprimir**    | Compras al proveedor y comanda de produccion                                      | MODELO_DATOS 8 |
 
 ### Advertencia importante sobre el calendario
 

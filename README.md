@@ -22,7 +22,7 @@
 
 Aplicación web de una sola página para calcular el **costo real de productos** (por ejemplo, recetas de
 pastelería o artesanía) a partir de un inventario de insumos, y definir su **precio de venta** en
-pesos uruguayos (UYU). *Esta sección describe la v1.*
+pesos uruguayos (UYU). _Esta sección describe la v1._
 
 - **Autor:** [nicodelos24](https://github.com/nicodelos24)
 - **Repositorio base:** https://github.com/nicodelos24/Proyecto-Fer
@@ -35,17 +35,17 @@ pesos uruguayos (UYU). *Esta sección describe la v1.*
 
 El usuario carga dos tipos de datos y la aplicación cruza ambos:
 
-| Entrada | Dónde | Para qué sirve |
-|---|---|---|
-| **Ingredientes** (inventario) | Formulario *Guardar ingrediente* | Saber cuánto se paid por unidad real de cada insumo |
-| **Productos** | Formulario *Guardar* | Calcular cuánto le cuesta producirlo y a cuánto venderlo |
+| Entrada                       | Dónde                            | Para qué sirve                                           |
+| ----------------------------- | -------------------------------- | -------------------------------------------------------- |
+| **Ingredientes** (inventario) | Formulario _Guardar ingrediente_ | Saber cuánto se paid por unidad real de cada insumo      |
+| **Productos**                 | Formulario _Guardar_             | Calcular cuánto le cuesta producirlo y a cuánto venderlo |
 
 ### Flujo de uso típico
 
 1. **Cargar el inventario.** Se registra cada insumo con su cantidad comprada, su unidad y lo que se
    pagó por el lote. Ej: `Harina — 25 kg — $1.200`. La app calcula sola el precio por kilo.
 2. **Cargar el producto.** Se elige uno o más ingredientes del inventario, se indica la cantidad usada
-   de cada uno, y la app suma el costo real de la receta, escribiéndolo en el campo *Costo en $UYU*.
+   de cada uno, y la app suma el costo real de la receta, escribiéndolo en el campo _Costo en $UYU_.
 3. **Definir el precio de venta.** De dos maneras excluyentes:
    - escribiendo el **precio** directamente, o
    - escribiendo el **% de ganancia deseado**, y la app lo calcula como
@@ -109,14 +109,14 @@ basta con leer `index.html` (qué existe) y `script.js` (qué hace).
 
 ## 4. Unidades y conversiones
 
-Es el corazón del cálculo de costos. Las unidades se agrupan por *tipo*, y solo se puede convertir
+Es el corazón del cálculo de costos. Las unidades se agrupan por _tipo_, y solo se puede convertir
 dentro de un mismo tipo:
 
-| Tipo    | Unidades                  | Factor a la base |
-| ------- | ------------------------- | ---------------- |
-| Peso    | `g`, `kg`                 | 1 g, 1000 g      |
-| Volumen | `ml`, `cl`, `l`           | 1 ml, 10 ml, 1000 ml |
-| Unidad  | `unidad`, `paquete`       | 1                |
+| Tipo    | Unidades            | Factor a la base     |
+| ------- | ------------------- | -------------------- |
+| Peso    | `g`, `kg`           | 1 g, 1000 g          |
+| Volumen | `ml`, `cl`, `l`     | 1 ml, 10 ml, 1000 ml |
+| Unidad  | `unidad`, `paquete` | 1                    |
 
 Fórmula: `cantidadConvertida = cantidad × (factorOrigen / factorDestino)`
 

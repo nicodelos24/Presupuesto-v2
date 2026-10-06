@@ -35,27 +35,27 @@ cuánto les cuesta realmente producir algo, en lugar de estimarlo "a ojo". El di
 app frente a una calculadora común es el **cálculo de costo por receta**: no se carga un costo
 arbitrario, se selecciona el insumo del inventario y la app descuenta el costo real consumido.
 
-**Naturaleza técnica:** aplicación *client-side* de una sola página. No hay backend, ni API, ni
+**Naturaleza técnica:** aplicación _client-side_ de una sola página. No hay backend, ni API, ni
 base de datos, ni proceso de build. Todo el estado vive en `localStorage` del navegador.
 
 ### Características
 
-| Funcionalidad | Estado |
-|---|---|
-| Alta, edición y borrado de ingredientes | Sí |
-| Alta, edición y borrado de productos | Sí |
-| Imagen adjunta (producto e ingrediente) | Sí, embebida en Base64 |
-| Costeo de receta multi-insumo | Sí |
-| Conversión automática de unidades | Sí (peso / volumen / unidad) |
-| Insumos comprados en paquetes | Sí, con contenido del paquete |
-| Precio por margen porcentual | Sí |
-| Ganancia total acumulada | Sí |
-| Persistencia automática | Sí (localStorage) |
-| Exportar / importar / imprimir | No |
-| Multiusuario o nube | No |
-| Historial de cambios / auditoría | No |
-| Control de stock y fechas de compra | No |
-| Tests automatizados | No |
+| Funcionalidad                           | Estado                        |
+| --------------------------------------- | ----------------------------- |
+| Alta, edición y borrado de ingredientes | Sí                            |
+| Alta, edición y borrado de productos    | Sí                            |
+| Imagen adjunta (producto e ingrediente) | Sí, embebida en Base64        |
+| Costeo de receta multi-insumo           | Sí                            |
+| Conversión automática de unidades       | Sí (peso / volumen / unidad)  |
+| Insumos comprados en paquetes           | Sí, con contenido del paquete |
+| Precio por margen porcentual            | Sí                            |
+| Ganancia total acumulada                | Sí                            |
+| Persistencia automática                 | Sí (localStorage)             |
+| Exportar / importar / imprimir          | No                            |
+| Multiusuario o nube                     | No                            |
+| Historial de cambios / auditoría        | No                            |
+| Control de stock y fechas de compra     | No                            |
+| Tests automatizados                     | No                            |
 
 ---
 
@@ -81,11 +81,11 @@ componentización, no hay ciclo de vida reactivo. El flujo es:
 
 ### 2.2 Las tres capas
 
-| Capa | Archivo | Responsabilidad |
-|---|---|---|
-| Estructura | `index.html` (139 líneas) | Solo markup: 2 formularios, 2 tablas, contador de total. Ninguna lógica. |
-| Presentación | `css/style.css` (183 líneas) | Estética pastel rosa, tablas con scroll horizontal, responsive básico a 600px. |
-| Comportamiento | `js/script.js` (649 líneas) | **Toda** la lógica: estado, cálculos, eventos, render, persistencia. |
+| Capa           | Archivo                      | Responsabilidad                                                                |
+| -------------- | ---------------------------- | ------------------------------------------------------------------------------ |
+| Estructura     | `index.html` (139 líneas)    | Solo markup: 2 formularios, 2 tablas, contador de total. Ninguna lógica.       |
+| Presentación   | `css/style.css` (183 líneas) | Estética pastel rosa, tablas con scroll horizontal, responsive básico a 600px. |
+| Comportamiento | `js/script.js` (649 líneas)  | **Toda** la lógica: estado, cálculos, eventos, render, persistencia.           |
 
 La consecuencia de esta separación es que `script.js` concentra ~100% de la complejidad: es a la vez
 el modelo de datos, la vista y el controlador.
@@ -96,20 +96,20 @@ Al inicio del script se cachean los nodos más usados (evita `getElementById` re
 listeners):
 
 ```js
-const form            = document.getElementById("form-prod");       // formulario de producto
-const tabla           = document.getElementById("tabla-prod");      // tabla de productos
-const total           = document.getElementById("ganancia-total");  // span del total
-const formIng         = document.getElementById("form-ing");        // formulario de insumo
-const tablaIng        = document.getElementById("tabla-ing").querySelector("tbody");
-const ingImagenInput  = document.getElementById("ing-imagen");
-const tablaProdBody   = tabla.querySelector("tbody");
-const unidadSelect    = document.getElementById("ing-unidad");      // selector de unidad de insumo
-const contenidoInput  = document.getElementById("ing-contenido");    // contenido del paquete
-const grupoPaquete    = document.getElementById("grupo-paquete");   // bloque oculto
-const costoInput      = document.getElementById("costo");
-const precioInput     = document.getElementById("precio");
-const imagenInput     = document.getElementById("imagen");
-const gananciaInput   = document.getElementById("ganancia-deseada");
+const form = document.getElementById("form-prod"); // formulario de producto
+const tabla = document.getElementById("tabla-prod"); // tabla de productos
+const total = document.getElementById("ganancia-total"); // span del total
+const formIng = document.getElementById("form-ing"); // formulario de insumo
+const tablaIng = document.getElementById("tabla-ing").querySelector("tbody");
+const ingImagenInput = document.getElementById("ing-imagen");
+const tablaProdBody = tabla.querySelector("tbody");
+const unidadSelect = document.getElementById("ing-unidad"); // selector de unidad de insumo
+const contenidoInput = document.getElementById("ing-contenido"); // contenido del paquete
+const grupoPaquete = document.getElementById("grupo-paquete"); // bloque oculto
+const costoInput = document.getElementById("costo");
+const precioInput = document.getElementById("precio");
+const imagenInput = document.getElementById("imagen");
+const gananciaInput = document.getElementById("ganancia-deseada");
 ```
 
 > Nota: hay **dos** variables distintas llamadas `unidadSelect` en el archivo. La global (línea 11)
@@ -122,7 +122,7 @@ El archivo es lineal y su carga determina el arranque:
 
 1. Declaración de referencias al DOM (líneas 1–27).
 2. Carga del estado desde `localStorage` (líneas 29–30).
-3. Definiciones de funciones (sealed por *hoisting*).
+3. Definiciones de funciones (sealed por _hoisting_).
 4. Registro de listeners de eventos.
 5. Llamada final de arranque (líneas 648–649):
    ```js
@@ -139,17 +139,18 @@ El archivo es lineal y su carga determina el arranque:
 
 ```jsonc
 {
-  "nombre": "Harina",           // string — se usa como IDENTIFICADOR único
-  "cantidad": 25,               // number — cuánto se compró (en `unidad`)
-  "unidad": "kg",               // "g" | "kg" | "ml" | "cl" | "l" | "unidad" | "paquete"
-  "precio": 1200,              // number — costo total del lote en UYU
-  "contenido": 1,              // number — contenido de cada paquete (1 si no es paquete)
-  "contenidoUnidad": "g",      // string — unidad del contenido del paquete
-  "imagen": "data:image/png;base64,..."  // string Base64 o ""
+  "nombre": "Harina", // string — se usa como IDENTIFICADOR único
+  "cantidad": 25, // number — cuánto se compró (en `unidad`)
+  "unidad": "kg", // "g" | "kg" | "ml" | "cl" | "l" | "unidad" | "paquete"
+  "precio": 1200, // number — costo total del lote en UYU
+  "contenido": 1, // number — contenido de cada paquete (1 si no es paquete)
+  "contenidoUnidad": "g", // string — unidad del contenido del paquete
+  "imagen": "data:image/png;base64,...", // string Base64 o ""
 }
 ```
 
 Derivado en tiempo de render (no se guarda):
+
 - Precio unitario: `precio / cantidad`.
 - Si es `paquete`: `precio / (cantidad × contenido)`, expresado en `contenidoUnidad`.
 
@@ -157,16 +158,17 @@ Derivado en tiempo de render (no se guarda):
 
 ```jsonc
 {
-  "id": 1730000000000,          // number — timestamp (Date.now()) usado como clave
+  "id": 1730000000000, // number — timestamp (Date.now()) usado como clave
   "nombre": "Torta de chocolate",
-  "costo": 350.75,              // number — costo total en UYU
-  "precio": 700.00,             // number — precio de venta en UYU
-  "ganancia": 349.25,           // number — precio − costo (valor congelado)
-  "porcentaje": 99.5,           // number — % de ganancia sobre el costo (valor congelado)
-  "ingredientes": [             // array — copia de la receta en el momento del guardado
-    { "nombre": "Harina", "cantidad": 500, "unidad": "g", "costo": 24.00 }
+  "costo": 350.75, // number — costo total en UYU
+  "precio": 700.0, // number — precio de venta en UYU
+  "ganancia": 349.25, // number — precio − costo (valor congelado)
+  "porcentaje": 99.5, // number — % de ganancia sobre el costo (valor congelado)
+  "ingredientes": [
+    // array — copia de la receta en el momento del guardado
+    { "nombre": "Harina", "cantidad": 500, "unidad": "g", "costo": 24.0 },
   ],
-  "imagen": "data:image/jpeg;base64,..."  // string Base64 o ""
+  "imagen": "data:image/jpeg;base64,...", // string Base64 o ""
 }
 ```
 
@@ -177,13 +179,13 @@ por sí solo.
 
 ### 3.3 Estado transitorio (no persistido)
 
-| Variable | Contenido | Ciclo de vida |
-|---|---|---|
-| `ingredientesUsados` | Filas de receta actualmente en el formulario de producto | Se reconstruye en cada `actualizarCostoIngredientes()`; se vacía al guardar |
-| `form.dataset.editId` | `id` del producto en edición | Se borra tras guardar (`delete form.dataset.editId`) |
-| `formIng.dataset.editIndex` | Índice en el array `ingredientes` del insumo en edición | Se borra tras guardar |
-| `gananciaTotal` | Variable global de ganancia acumulada | **Huérfana**: se escribe en línea 441 pero nunca se lee |
-| `form.dataset.editId` vs `editIndex` |(producto usa `id`, insumo usa índice de array) | Asimetría: frágil ante reordenamientos |
+| Variable                             | Contenido                                                | Ciclo de vida                                                               |
+| ------------------------------------ | -------------------------------------------------------- | --------------------------------------------------------------------------- |
+| `ingredientesUsados`                 | Filas de receta actualmente en el formulario de producto | Se reconstruye en cada `actualizarCostoIngredientes()`; se vacía al guardar |
+| `form.dataset.editId`                | `id` del producto en edición                             | Se borra tras guardar (`delete form.dataset.editId`)                        |
+| `formIng.dataset.editIndex`          | Índice en el array `ingredientes` del insumo en edición  | Se borra tras guardar                                                       |
+| `gananciaTotal`                      | Variable global de ganancia acumulada                    | **Huérfana**: se escribe en línea 441 pero nunca se lee                     |
+| `form.dataset.editId` vs `editIndex` | (producto usa `id`, insumo usa índice de array)          | Asimetría: frágil ante reordenamientos                                      |
 
 ---
 
@@ -193,7 +195,7 @@ Dos claves en `localStorage`:
 
 ```js
 let ingredientes = JSON.parse(localStorage.getItem("ingredientes")) || [];
-const productos   = JSON.parse(localStorage.getItem("productos"))   || [];
+const productos = JSON.parse(localStorage.getItem("productos")) || [];
 ```
 
 - Se escribe en 3 lugares: alta/edición de insumo, alta/edición de producto, borrado de producto.
@@ -220,19 +222,19 @@ Tabla de conversión (`script.js:50-57`):
 
 ```js
 const conversion = {
-  g:      { tipo: "peso",    factor: 1 },
-  kg:     { tipo: "peso",    factor: 1000 },
-  ml:     { tipo: "volumen", factor: 1 },
-  cl:     { tipo: "volumen", factor: 10 },
-  l:      { tipo: "volumen", factor: 1000 },
-  unidad: { tipo: "unidad",  factor: 1 },
+  g: { tipo: "peso", factor: 1 },
+  kg: { tipo: "peso", factor: 1000 },
+  ml: { tipo: "volumen", factor: 1 },
+  cl: { tipo: "volumen", factor: 10 },
+  l: { tipo: "volumen", factor: 1000 },
+  unidad: { tipo: "unidad", factor: 1 },
   // "paquete" NO está: no es una unidad convertible, es un contenedor
 };
 ```
 
-| Función | Comportamiento |
-|---|---|
-| `obtenerTipoUnidad(u)` | Devuelve `peso`, `volumen` o `unidad`; si la unidad no está en la tabla devuelve `unidad` por defecto. |
+| Función                                    | Comportamiento                                                                                                                                                                                                              |
+| ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `obtenerTipoUnidad(u)`                     | Devuelve `peso`, `volumen` o `unidad`; si la unidad no está en la tabla devuelve `unidad` por defecto.                                                                                                                      |
 | `convertirCantidad(cant, origen, destino)` | Si son iguales, devuelve tal cual. Si alguna no existe en la tabla, devuelve sin convertir. Si los **tipos difieren**, hace `console.warn` y devuelve sin convertir. Si coinciden: `cant × (factorOrigen / factorDestino)`. |
 
 Decisiones de diseño correctas que conviene preservar:
@@ -310,9 +312,10 @@ Cada fila muestra además su costo parcial en un `<span>`, recalculado en vivo m
 En el `submit` del formulario de producto:
 
 ```js
-if (precioInput.value !== "")        precioFinal = parseFloat(precioInput.value);
-else if (gananciaInput.value !== "") precioFinal = costo + (costo * porcentaje / 100);
-else                                 alert("Debes ingresar precio o porcentaje de ganancia");
+if (precioInput.value !== "") precioFinal = parseFloat(precioInput.value);
+else if (gananciaInput.value !== "")
+  precioFinal = costo + (costo * porcentaje) / 100;
+else alert("Debes ingresar precio o porcentaje de ganancia");
 ```
 
 Y luego:
@@ -330,12 +333,15 @@ porcentaje = ((precioFinal - costo) / costo) × 100;
 
 ```js
 function actualizarGananciaTotal() {
-  tabla.querySelectorAll("tr").forEach(fila => {
-    const costo  = parseFloat(fila.children[1].textContent.replace(/[^\d.-]/g, "")) || 0;
-    const precio = parseFloat(fila.children[2].textContent.replace(/[^\d.-]/g, "")) || 0;
+  tabla.querySelectorAll("tr").forEach((fila) => {
+    const costo =
+      parseFloat(fila.children[1].textContent.replace(/[^\d.-]/g, "")) || 0;
+    const precio =
+      parseFloat(fila.children[2].textContent.replace(/[^\d.-]/g, "")) || 0;
     totalGanancia += precio - costo;
   });
-  document.getElementById("ganancia-total").textContent = totalGanancia.toFixed(2);
+  document.getElementById("ganancia-total").textContent =
+    totalGanancia.toFixed(2);
 }
 ```
 
@@ -352,38 +358,39 @@ de verdad para el mismo número.
 ### 7.1 Arranque
 
 ```js
-cargarIngredientes();  // tbody.innerHTML = "" → ingredientes.forEach(agregarIngredienteATabla)
-cargarProductos();     // tbody.innerHTML = "" → productos.forEach(agregarProductoATabla)
-                       //           → actualizarGananciaTotal()
+cargarIngredientes(); // tbody.innerHTML = "" → ingredientes.forEach(agregarIngredienteATabla)
+cargarProductos(); // tbody.innerHTML = "" → productos.forEach(agregarProductoATabla)
+//           → actualizarGananciaTotal()
 ```
 
 ### 7.2 Formulario de ingrediente
 
-| Evento | Efecto |
-|---|---|
-| `change` en `#ing-unidad` | Si es `paquete`, muestra `#grupo-paquete` (`display:flex`) y limpia el contenido; si no, lo oculta y vacía el campo. |
-| `submit` | Valida nombre, cantidad > 0 y precio > 0. Si `dataset.editIndex` existe, reemplaza en el índice; si no, hace `push`. Persiste, **re-renderiza toda la tabla** y resetea el formulario. |
-| Click ✏️ | Carga los datos del insumo en el formulario, muestra `#grupo-paquete` si corresponde, calcula `editIndex` por **nombre**, hace scroll suave y enfoca el nombre. |
-| Click 🗑️ | Filtra el array por nombre, persiste y quita **solo esa fila** del DOM (sin re-render completo). |
+| Evento                    | Efecto                                                                                                                                                                                 |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `change` en `#ing-unidad` | Si es `paquete`, muestra `#grupo-paquete` (`display:flex`) y limpia el contenido; si no, lo oculta y vacía el campo.                                                                   |
+| `submit`                  | Valida nombre, cantidad > 0 y precio > 0. Si `dataset.editIndex` existe, reemplaza en el índice; si no, hace `push`. Persiste, **re-renderiza toda la tabla** y resetea el formulario. |
+| Click ✏️                  | Carga los datos del insumo en el formulario, muestra `#grupo-paquete` si corresponde, calcula `editIndex` por **nombre**, hace scroll suave y enfoca el nombre.                        |
+| Click 🗑️                  | Filtra el array por nombre, persiste y quita **solo esa fila** del DOM (sin re-render completo).                                                                                       |
 
 ### 7.3 Formulario de producto
 
-| Evento | Efecto |
-|---|---|
-| `input` en `#precio` | Si tiene valor: deshabilita y vacía `#ganancia-deseada`. Si se vacía: la re-habilita. |
-| `input` en `#ganancia-deseada` | Espejo del anterior. De aquí sale la **exclusión mutua** entre los dos campos. |
+| Evento                           | Efecto                                                                                                                                                                                                                                         |
+| -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `input` en `#precio`             | Si tiene valor: deshabilita y vacía `#ganancia-deseada`. Si se vacía: la re-habilita.                                                                                                                                                          |
+| `input` en `#ganancia-deseada`   | Espejo del anterior. De aquí sale la **exclusión mutua** entre los dos campos.                                                                                                                                                                 |
 | Click "+ Agregar del inventario" | Si el inventario está vacío, avisa y aborta. Crea una fila con: selector de insumo, input de cantidad, selector de unidad (dinámico según el tipo del insumo), costo parcial y botón ❌. Inserta con `prepend` (la fila nueva aparece arriba). |
-| `change` del selector de insumo | Reconstruye el selector de unidad según el tipo del insumo elegido y recalcula totales. |
-| `input`/`change` de la fila | Recalcula el costo total de la receta en vivo. |
-| `submit` | Valida nombre y costo > 0; calcula precio; crea o actualiza el producto; persiste; **resetea ambos formularios** y limpia las filas de receta. |
-| Click ✏️ | Rellena el formulario con el producto, reconstruye todas sus filas de ingredientes con sus valores, fija `dataset.editId`, scroll y foco. |
-| Click 🗑️ | `confirm()` nativo, borra por `id`, persiste, quita la fila, recalcula el total. |
+| `change` del selector de insumo  | Reconstruye el selector de unidad según el tipo del insumo elegido y recalcula totales.                                                                                                                                                        |
+| `input`/`change` de la fila      | Recalcula el costo total de la receta en vivo.                                                                                                                                                                                                 |
+| `submit`                         | Valida nombre y costo > 0; calcula precio; crea o actualiza el producto; persiste; **resetea ambos formularios** y limpia las filas de receta.                                                                                                 |
+| Click ✏️                         | Rellena el formulario con el producto, reconstruye todas sus filas de ingredientes con sus valores, fija `dataset.editId`, scroll y foco.                                                                                                      |
+| Click 🗑️                         | `confirm()` nativo, borra por `id`, persiste, quita la fila, recalcula el total.                                                                                                                                                               |
 
 ### 7.4 Manejo de imágenes
 
 ```js
-function leerImagen(file) {           // Promise<FileReader>
-  reader.readAsDataURL(file);         // → "data:image/png;base64,..."
+function leerImagen(file) {
+  // Promise<FileReader>
+  reader.readAsDataURL(file); // → "data:image/png;base64,..."
 }
 ```
 
@@ -394,20 +401,20 @@ En edición se preserva la imagen previa **solo si no se elige un archivo nuevo*
 
 ## 8. Catálogo de funciones
 
-| Función | Ubicación | Descripción |
-|---|---|---|
-| `actualizarGananciaTotal()` | `script.js:34` | Suma precio − costo leyendo el DOM; escribe en `#ganancia-total`. |
-| `obtenerTipoUnidad(unidad)` | `script.js:59` | `peso` \| `volumen` \| `unidad` a partir de la tabla `conversion`. |
-| `convertirCantidad(cant, orig, dest)` | `script.js:64` | Convierte dentro del mismo tipo de unidad. |
-| `leerImagen(file)` | `script.js:87` | Devuelve Promise con la imagen como Data URL. |
-| `agregarIngredienteATabla(ing)` | `script.js:96` | Renderiza una fila del inventario y registra sus listeners. |
+| Función                                | Ubicación                | Descripción                                                                           |
+| -------------------------------------- | ------------------------ | ------------------------------------------------------------------------------------- |
+| `actualizarGananciaTotal()`            | `script.js:34`           | Suma precio − costo leyendo el DOM; escribe en `#ganancia-total`.                     |
+| `obtenerTipoUnidad(unidad)`            | `script.js:59`           | `peso` \| `volumen` \| `unidad` a partir de la tabla `conversion`.                    |
+| `convertirCantidad(cant, orig, dest)`  | `script.js:64`           | Convierte dentro del mismo tipo de unidad.                                            |
+| `leerImagen(file)`                     | `script.js:87`           | Devuelve Promise con la imagen como Data URL.                                         |
+| `agregarIngredienteATabla(ing)`        | `script.js:96`           | Renderiza una fila del inventario y registra sus listeners.                           |
 | `actualizarOpcionesUnidad(unidadBase)` | `script.js:213` y `:568` | Rellena el selector de unidad según el tipo del insumo. **Duplicada** en dos lugares. |
-| `actualizarCostoIngredientes()` | `script.js:281` | Recorre las filas de receta, aplica los 3 casos, escribe el total. |
-| `agregarProductoATabla(prod)` | `script.js:507` | Renderiza una fila de producto y registra edición/borrado. |
-| `cargarProductos()` | `script.js:636` | Re-renderiza la tabla de productos desde el array. |
-| `cargarIngredientes()` | `script.js:642` | Re-renderiza la tabla de ingredientes desde el array. |
-| `form` listener `submit` | `script.js:365` | Alta/edición de producto. |
-| `formIng` listener `submit` | `script.js:453` | Alta/edición de ingrediente. |
+| `actualizarCostoIngredientes()`        | `script.js:281`          | Recorre las filas de receta, aplica los 3 casos, escribe el total.                    |
+| `agregarProductoATabla(prod)`          | `script.js:507`          | Renderiza una fila de producto y registra edición/borrado.                            |
+| `cargarProductos()`                    | `script.js:636`          | Re-renderiza la tabla de productos desde el array.                                    |
+| `cargarIngredientes()`                 | `script.js:642`          | Re-renderiza la tabla de ingredientes desde el array.                                 |
+| `form` listener `submit`               | `script.js:365`          | Alta/edición de producto.                                                             |
+| `formIng` listener `submit`            | `script.js:453`          | Alta/edición de ingrediente.                                                          |
 
 ---
 
@@ -431,9 +438,11 @@ usuario ve una ganancia que ya no es real.
 
 **9.3 El nombre del ingrediente es su identidad.**
 Todo alta, búsqueda, edición y borrado se resuelve por `nombre`:
+
 ```js
 ingredientes = ingredientes.filter((i) => i.nombre !== ing.nombre);
 ```
+
 Dos insumos con el mismo nombre ("Azúcar") colisionan: se borran o editan juntos. Además,
 `formIng.dataset.editIndex` se recalcula por nombre, así que si hay duplicados el índice puede
 apuntar al equivocado.
@@ -442,13 +451,15 @@ apuntar al equivocado.
 Para insumos normales se guarda `contenido: 1` (línea 471: `contenidoFinal = unidad === "paquete" ? contenido : 1`),
 pero `contenidoUnidad` **sí** se guarda (por defecto `"g"` del `<select>`). Si el insumo está
 cargado en `kg` y en la receta se selecciona unidad `paquete`:
+
 ```js
 contenidoEnBase = convertirCantidad(1, "g", "kg") = 0.001
 cantidadConvertida = 3 paquetes × 0.001 = 0.003 kg   // 3 paquetes ≈ 3 gramos
 ```
+
 El costo resultante es ~3000 veces menor que el real, y **no hay ningún aviso**. La UI además
 ofrece la opción `paquete` en este caso porque `obtenerTipoUnidad("kg")` devuelve `"peso"`, pero
-el `select` de la fila se puebla con opciones de *peso*… en realidad aquí el problema es que
+el `select` de la fila se puebla con opciones de _peso_… en realidad aquí el problema es que
 `paquete` es alcanzable sólo por el camino de `unidad`; el caso 2 existe pero opera sobre datos que
 el modelo no representa. Recomiendo **eliminar el caso 2** y forbidding `paquete` como unidad de uso
 cuando el insumo no es un paquete.
@@ -469,6 +480,7 @@ render y el modelo divergen, el número mostrado depende de qué operación se h
 
 **9.8 La fila del inventario tiene una celda de más.** En `agregarIngredienteATabla()` los botones
 se escriben dentro de la misma etiqueta que la celda de la imagen:
+
 ```html
 <td>...</td>
 <td>...</td>   <!-- imagen -->
@@ -476,11 +488,12 @@ se escriben dentro de la misma etiqueta que la celda de la imagen:
 <button>🗑️</button>
 </td>
 ```
+
 Es decir, `<button>` como hijo directo de `<tr>`. El navegador lo reubica y la tabla queda con
 8 columnas sobre un `<thead>` de 7. El botón de 🗑️ además queda desalineado respecto al resto de
 productos.
 
-**9.9 Editar un producto con precio *y* porcentaje cargados.** El handler de ✏️ escribe ambos
+**9.9 Editar un producto con precio _y_ porcentaje cargados.** El handler de ✏️ escribe ambos
 campos a la vez (`precioInput.value = prod.precio; gananciaInput.value = prod.porcentaje;`).
 Como la exclusión mutua solo dispara con el evento `input` (y asignar `.value` por código **no**
 dispara eventos), ambos campos quedan habilitados y con valor. Al guardar siempre gana el precio,
@@ -488,9 +501,11 @@ pero el porcentaje queda visible y engañoso. Debería deshabilitarse uno explí
 
 **9.10 Sin sanitización de entrada.** Nombres de producto e ingrediente se inyectan en
 `innerHTML`:
+
 ```js
 fila.innerHTML = `<td>${ing.nombre}</td>`;
 ```
+
 Un nombre como `<img src=x onerror=alert(1)>` se ejecuta. Como es una app local el riesgo es
 menor, pero se vuelve real si algún día se carga un backup o datos de otra persona.
 
@@ -537,16 +552,16 @@ monitores anchos queda mucho espacio muerto.
 
 ## 10. Deuda técnica
 
-| Área | Estado |
-|---|---|
-| **Tests** | Ninguno. Cero cobertura, ni siquiera de las fórmulas de conversión, que son lo más crítico. |
-| **Linter / formateador** | Ninguno. Estilo inconsistente: comillas dobles, `==` y `===` mezclados, indentación de 2 espacios en JS pero 4 en CSS. |
-| **Gestión de dependencias** | No aplica: cero dependencias. |
-| **Git** | 2 commits, mensajes genéricos (`comit`), sin `.gitignore`, en `master`. |
-| **CI/CD** | Ninguno. |
-| **Accesibilidad** | Sin `<label for>` correctamente asociados en varios casos, botones con emoji sin `aria-label`, sin navegación por teclado en las tablas, sin roles ARIA. |
-| **Internacionalización** | Textos en español con `$UYU` fijo. No hay abstracción de moneda. |
-| **Seguridad** | Solo el `innerHTML` sin sanitizar (9.10). Sin superficie de red. |
+| Área                        | Estado                                                                                                                                                   |
+| --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Tests**                   | Ninguno. Cero cobertura, ni siquiera de las fórmulas de conversión, que son lo más crítico.                                                              |
+| **Linter / formateador**    | Ninguno. Estilo inconsistente: comillas dobles, `==` y `===` mezclados, indentación de 2 espacios en JS pero 4 en CSS.                                   |
+| **Gestión de dependencias** | No aplica: cero dependencias.                                                                                                                            |
+| **Git**                     | 2 commits, mensajes genéricos (`comit`), sin `.gitignore`, en `master`.                                                                                  |
+| **CI/CD**                   | Ninguno.                                                                                                                                                 |
+| **Accesibilidad**           | Sin `<label for>` correctamente asociados en varios casos, botones con emoji sin `aria-label`, sin navegación por teclado en las tablas, sin roles ARIA. |
+| **Internacionalización**    | Textos en español con `$UYU` fijo. No hay abstracción de moneda.                                                                                         |
+| **Seguridad**               | Solo el `innerHTML` sin sanitizar (9.10). Sin superficie de red.                                                                                         |
 
 ---
 
@@ -638,17 +653,17 @@ Ordenadas por relación esfuerzo/beneficio.
 
 ### Mapa de `id`s clave (contrato HTML ↔ JS)
 
-| `id` | Elemento | Usado en |
-|---|---|---|
-| `form-prod` | Formulario de producto | `form` |
-| `nombre`, `costo`, `precio`, `ganancia-deseada` | Campos del producto | submit + handlers |
-| `imagen` | Input file del producto | submit |
-| `lista-ingredientes-uso`, `costo-ingredientes`, `agregar-ingrediente-uso` | Receta | `actualizarCostoIngredientes` |
-| `form-ing` | Formulario de ingrediente | `formIng` |
-| `ing-nombre`, `ing-cantidad`, `ing-unidad`, `ing-precio`, `ing-imagen` | Campos de insumo | submit + edición |
-| `grupo-paquete`, `ing-contenido`, `ing-contenido-unidad` | Bloque de paquete | change de unidad |
-| `tabla-prod`, `tabla-ing` | Tablas | render + `actualizarGananciaTotal` |
-| `ganancia-total` | Span del total | `total` |
+| `id`                                                                      | Elemento                  | Usado en                           |
+| ------------------------------------------------------------------------- | ------------------------- | ---------------------------------- |
+| `form-prod`                                                               | Formulario de producto    | `form`                             |
+| `nombre`, `costo`, `precio`, `ganancia-deseada`                           | Campos del producto       | submit + handlers                  |
+| `imagen`                                                                  | Input file del producto   | submit                             |
+| `lista-ingredientes-uso`, `costo-ingredientes`, `agregar-ingrediente-uso` | Receta                    | `actualizarCostoIngredientes`      |
+| `form-ing`                                                                | Formulario de ingrediente | `formIng`                          |
+| `ing-nombre`, `ing-cantidad`, `ing-unidad`, `ing-precio`, `ing-imagen`    | Campos de insumo          | submit + edición                   |
+| `grupo-paquete`, `ing-contenido`, `ing-contenido-unidad`                  | Bloque de paquete         | change de unidad                   |
+| `tabla-prod`, `tabla-ing`                                                 | Tablas                    | render + `actualizarGananciaTotal` |
+| `ganancia-total`                                                          | Span del total            | `total`                            |
 
 ### Atajos de mantenimiento
 
@@ -671,15 +686,15 @@ copy(JSON.stringify(localStorage).length)   # caracteres
 
 ## Anexo — Glosario
 
-| Término | Significado en este proyecto |
-|---|---|
-| **Ingrediente / insumo** | Materia prima del inventario (harina, azúcar, chocolate). |
-| **Producto** | Lo que se vende, compuesto por ingredientes. |
-| **Costo** | Cuánto le cuesta producir **una unidad** del producto. |
-| **Precio** | A cuánto se vende **una unidad**. |
-| **Ganancia** | `precio − costo`, en pesos. |
-| **Porcentaje de ganancia** | `(precio − costo) / costo × 100`. Margen sobre el **costo**. |
-| **Lote** | La cantidad comprada de una sola vez (25 kg, 4 paquetes). |
-| **Contenido** | Cuánto trae **cada** paquete (500 g por paquete). |
-| **Precio unitario** | `precio del lote / unidades del lote`. |
-| **$UYU** | Peso uruguayo, la única moneda soportada (string fijo en el código). |
+| Término                    | Significado en este proyecto                                         |
+| -------------------------- | -------------------------------------------------------------------- |
+| **Ingrediente / insumo**   | Materia prima del inventario (harina, azúcar, chocolate).            |
+| **Producto**               | Lo que se vende, compuesto por ingredientes.                         |
+| **Costo**                  | Cuánto le cuesta producir **una unidad** del producto.               |
+| **Precio**                 | A cuánto se vende **una unidad**.                                    |
+| **Ganancia**               | `precio − costo`, en pesos.                                          |
+| **Porcentaje de ganancia** | `(precio − costo) / costo × 100`. Margen sobre el **costo**.         |
+| **Lote**                   | La cantidad comprada de una sola vez (25 kg, 4 paquetes).            |
+| **Contenido**              | Cuánto trae **cada** paquete (500 g por paquete).                    |
+| **Precio unitario**        | `precio del lote / unidades del lote`.                               |
+| **$UYU**                   | Peso uruguayo, la única moneda soportada (string fijo en el código). |
