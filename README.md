@@ -35,6 +35,40 @@ git remote set-url origin git@github.com:nicodelos24/Presupuesto-v2.git
 En una máquina nueva, después de clonar, conviene comprobar con `ssh -T git@github.com`. La
 instalación de la clave en Linux y en Windows está en [IA_GUIDE.md](IA_GUIDE.md).
 
+### Publicar la página
+
+La publicación es con **Cloudflare Pages**, no con GitHub Pages. La razón está en
+[ROADMAP.md](ROADMAP.md): GitHub Pages obliga a que el repositorio sea público, y el código de un
+producto que se vende es la parte que menos se quiere exponer. Cloudflare Pages acepta repositorio
+privado en plan gratuito y sin límite de ancho de banda.
+
+La configuración, en el panel de Cloudflare, al conectar el repositorio:
+
+| Campo | Valor |
+|---|---|
+| Framework preset | Vite |
+| Build command | `npm run build` |
+| Build output directory | `dist` |
+| Root directory | `/` |
+| Variable `NODE_VERSION` | `22` |
+
+**Variables de entorno** (opcionales pero recomendadas), en *Settings → Environment variables*:
+
+```
+VITE_SUPABASE_URL=https://tu-proyecto.supabase.co
+VITE_SUPABASE_PUBLISHABLE_KEY=sb_publishable_...
+```
+
+Sin esas variables la aplicación igual funciona: `src/lib/supabase.ts` detecta que no hay conexión
+configurada y la app queda en modo local sin base de datos. Se avisó de esto al migrar el proyecto.
+
+**No hacen falta reglas de redirección.** La navegación usa direcciones con `#` (`#/recetario`), que
+se resuelven en el navegador sin pedir archivos al servidor, así que no hay que crear el `404.html`
+que las aplicaciones de una sola página suelen necesitar.
+
+Cloudflare Pages se conecta al repositorio y construye en cada push, así que no hay ningún archivo de
+configuración en el proyecto ni workflow de despliegue que mantener.
+
 ---
 
 # Proyecto Fer — Calculadora de presupuestos y costos
