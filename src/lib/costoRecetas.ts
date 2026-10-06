@@ -46,11 +46,7 @@ export function aUnidadBase(
     const unidadContenido = articulo.unidadContenido;
     if (!contenido || contenido <= 0 || !unidadContenido) return null;
     const base = tipoDeUnidad(unidadContenido) === "peso" ? "g" : "ml";
-    const contenidoEnBase = convertirCantidad(
-      contenido,
-      unidadContenido,
-      base,
-    );
+    const contenidoEnBase = convertirCantidad(contenido, unidadContenido, base);
     if (contenidoEnBase === null || contenidoEnBase <= 0) return null;
     return convertirCantidad(cantidad, unidad, base) !== null
       ? (convertirCantidad(cantidad, unidad, base) as number) / contenidoEnBase
@@ -84,11 +80,16 @@ export function costoUnitarioArticulo(
   let resultado: number;
 
   if (!articulo.esElaborado || articulo.receta.length === 0) {
-    resultado = Number.isFinite(articulo.costoPromedio)
-      ? Math.max(articulo.costoPromedio, 0)
-      : 0;
     if (!Number.isFinite(articulo.costoPromedio)) {
       ctx.errores.push("precio-invalido");
+      resultado = 0;
+    } else if (articulo.costoPromedio <= 0) {
+      // Un insumo sin costo rompe en cascada todos los productos que lo usan:
+      // mostraria un margen falso sin avisar. No se informa como error y ya.
+      ctx.errores.push("precio-invalido");
+      resultado = 0;
+    } else {
+      resultado = articulo.costoPromedio;
     }
   } else {
     const rendimiento = cantidadRendimiento(articulo);

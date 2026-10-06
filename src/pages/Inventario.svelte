@@ -28,22 +28,28 @@
   let unidadCompra = $state<CodigoUnidad | null>(null);
   let contenidoPaquete = $state<number | null>(null);
   let unidadContenido = $state<CodigoUnidad>("g");
+  let esVendible = $state(false);
+  let duracionDias = $state<number | null>(null);
 
+  // Inventario es lo que se compra y se tiene: las materias primas y lo que se
+  // revende sin receta. Lo que se elabora vive en el recetario.
   const visibles = $derived(
     articulos
-      .filter((a) => a.activo)
+      .filter((a) => a.activo && !a.esElaborado)
       .filter((a) =>
         a.nombre.toLowerCase().includes(busqueda.trim().toLowerCase()),
       )
       .sort((a, b) => a.nombre.localeCompare(b.nombre)),
   );
 
-  const totalArticulos = $derived(articulos.filter((a) => a.activo).length);
+  const totalArticulos = $derived(
+    articulos.filter((a) => a.activo && !a.esElaborado).length,
+  );
 
   const valorInventario = $derived(
     redondearMoneda(
       articulos
-        .filter((a) => a.activo)
+        .filter((a) => a.activo && !a.esElaborado)
         .reduce((suma, a) => suma + a.stock * a.costoPromedio, 0),
     ),
   );
@@ -54,7 +60,11 @@
 
   const enAlerta = $derived(
     articulos.filter(
-      (a) => a.activo && a.stockMinimo !== null && a.stock <= a.stockMinimo,
+      (a) =>
+        a.activo &&
+        !a.esElaborado &&
+        a.stockMinimo !== null &&
+        a.stock <= a.stockMinimo,
     ),
   );
 
@@ -72,6 +82,8 @@
     unidadCompra = null;
     contenidoPaquete = null;
     unidadContenido = "g";
+    esVendible = false;
+    duracionDias = null;
     errores = {};
     abierto = true;
   }
@@ -86,6 +98,8 @@
     unidadCompra = articulo.unidadCompra;
     contenidoPaquete = articulo.contenidoPaquete;
     unidadContenido = articulo.unidadContenido ?? "g";
+    esVendible = articulo.esVendible;
+    duracionDias = articulo.duracionDias;
     errores = {};
     abierto = true;
   }
@@ -117,26 +131,36 @@
       errores = { contenidoPaquete: "Falta cuanto trae el paquete" };
       return;
     }
+    if (
+      duracionDias !== null &&
+      (!Number.isFinite(duracionDias) || duracionDias <= 0)
+    ) {
+      errores = { duracionDias: "La duración tiene que ser más de un día" };
+      return;
+    }
 
+    // Editar desde Inventario no puede pisar lo que un artículo elaborado ya tiene:
+    // su receta y su tipo son de otro formulario.
     const datos = {
       nombre,
-      tipo: "materia_prima" as const,
-      esVendible: false,
-      esElaborado: false,
+      tipo: enEdicion?.tipo ?? ("materia_prima" as Articulo["tipo"]),
+      esVendible,
+      esElaborado: enEdicion?.esElaborado ?? false,
       unidad,
       unidadCompra,
       contenidoPaquete: unidadCompra === "paquete" ? contenidoPaquete : null,
       unidadContenido: unidadCompra === "paquete" ? unidadContenido : null,
       stock,
       costoPromedio,
-      rendimientoCantidad: null,
-      rendimientoUnidad: null,
-      mermaPct: 0,
+      rendimientoCantidad: enEdicion?.rendimientoCantidad ?? null,
+      rendimientoUnidad: enEdicion?.rendimientoUnidad ?? null,
+      mermaPct: enEdicion?.mermaPct ?? 0,
       stockMinimo,
       proveedorId: null,
       fotoUrl: enEdicion?.fotoUrl ?? null,
-      notas: null,
-      receta: [] as Articulo["receta"],
+      notas: enEdicion?.notas ?? null,
+      duracionDias,
+      receta: enEdicion?.receta ?? ([] as Articulo["receta"]),
       activo: true,
     };
 
@@ -181,8 +205,8 @@
     <Info size={17} class="mt-0.5 shrink-0 text-brand-500" />
     <span>
       <strong class="font-semibold">Modo demostración.</strong>
-      Los datos quedan en la memoria del navegador y se pierden al recargar.
-      Cuando activemos las cuentas se guardan en tu negocio de verdad.
+      Los datos quedan en la memoria del navegador y se pierden al recargar. Cuando
+      activemos las cuentas se guardan en tu negocio de verdad.
     </span>
   </p>
 
@@ -279,6 +303,15 @@
               {money.format(redondearMoneda(articulo.costoPromedio))} por
               {articulo.unidad}
             </p>
+            {#if articulo.duracionDias !== null}
+              <p class="truncate text-xs text-ink-400">
+                Dura {articulo.duracionDias}
+                {articulo.duracionDias === 1 ? "día" : "días"}
+              </p>
+            {/if}
+            {#if articulo.esVendible}
+              <p class="truncate text-xs text-brand-600">Se puede vender</p>
+            {/if}
           </div>
 
           <div class="flex shrink-0 gap-1">
@@ -403,12 +436,47 @@
             }}
           />
 
+          <Campo
+            id="duracion-dias-inv"
+            etiqueta="Cuánto dura"
+            tipo="number"
+            min={1}
+            paso="1"
+            valor={duracionDias ?? ""}
+            placeholder="Vacío = no vence"
+            descripcion="Opcional. Cuántos días aguanta desde que entra: leche, carne. La harina no se echa a perder."
+            error={errores.duracionDias}
+            oninput={(e) => {
+              const bruto = (e.currentTarget as HTMLInputElement).value;
+              duracionDias = bruto === "" ? null : Number(bruto);
+            }}
+          />
+
+          <label class="opcion-fila" class:opcion-activa={esVendible}>
+            <input
+              type="checkbox"
+              checked={esVendible}
+              onchange={(e) => {
+                esVendible = (e.currentTarget as HTMLInputElement).checked;
+              }}
+            />
+            <span>
+              <strong>Esto también se vende</strong>
+              <small>
+                Para una carnicería, una verdulería o un almacén: comprás y
+                revendés, sin receta.
+              </small>
+            </span>
+          </label>
+
           <div class="grid grid-cols-2 gap-3">
             <div>
-              <label class="etiqueta" for="unidad-compra">
-                Se compra en
-              </label>
-              <select class="campo" id="unidad-compra" bind:value={unidadCompra}>
+              <label class="etiqueta" for="unidad-compra"> Se compra en </label>
+              <select
+                class="campo"
+                id="unidad-compra"
+                bind:value={unidadCompra}
+              >
                 <option value={null}>Misma unidad</option>
                 {#each Object.keys(UNIDADES) as codigo (codigo)}
                   <option value={codigo}>
@@ -422,7 +490,11 @@
               <label class="etiqueta" for="unidad-contenido">
                 Unidad del contenido
               </label>
-              <select class="campo" id="unidad-contenido" bind:value={unidadContenido}>
+              <select
+                class="campo"
+                id="unidad-contenido"
+                bind:value={unidadContenido}
+              >
                 {#each Object.keys(UNIDADES) as codigo (codigo)}
                   <option value={codigo}>
                     {UNIDADES[codigo as CodigoUnidad].etiqueta}

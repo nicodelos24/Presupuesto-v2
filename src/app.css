@@ -14,8 +14,16 @@
   body {
     min-height: 100dvh;
     background-image:
-      radial-gradient(60rem 30rem at 110% -10%, rgb(54 94 242 / 0.10), transparent 60%),
-      radial-gradient(45rem 25rem at -10% 0%, rgb(16 185 138 / 0.08), transparent 55%);
+      radial-gradient(
+        60rem 30rem at 110% -10%,
+        rgb(54 94 242 / 0.1),
+        transparent 60%
+      ),
+      radial-gradient(
+        45rem 25rem at -10% 0%,
+        rgb(16 185 138 / 0.08),
+        transparent 55%
+      );
     background-attachment: fixed;
   }
 
@@ -47,6 +55,24 @@
 
   .etiqueta {
     @apply mb-1.5 block text-sm font-medium text-ink-600;
+  }
+
+  /* Fila de opcion con titulo y explicacion, para elegir con el dedo */
+  .opcion-fila {
+    @apply flex cursor-pointer items-start gap-3 rounded-xl border border-ink-200
+      bg-white p-3.5 transition hover:border-ink-300;
+  }
+
+  .opcion-fila input {
+    @apply mt-1 h-5 w-5 shrink-0 accent-brand-600;
+  }
+
+  .opcion-fila small {
+    @apply mt-0.5 block text-xs leading-relaxed text-ink-500;
+  }
+
+  .opcion-activa {
+    @apply border-brand-500 bg-brand-50/60;
   }
 
   .boton,

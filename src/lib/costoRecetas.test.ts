@@ -17,6 +17,7 @@ function materia(
   unidad: Articulo["unidad"],
   stock: number,
   costoPromedio: number,
+  extra: Partial<Articulo> = {},
 ): Articulo {
   return {
     id,
@@ -37,8 +38,10 @@ function materia(
     proveedorId: null,
     fotoUrl: null,
     notas: null,
+    duracionDias: null,
     receta: [],
     activo: true,
+    ...extra,
   };
 }
 
@@ -66,6 +69,7 @@ function preparado(
     proveedorId: null,
     fotoUrl: null,
     notas: null,
+    duracionDias: null,
     activo: true,
     ...datos,
   };
@@ -237,6 +241,55 @@ describe("recetas de recetas", () => {
   });
 });
 
+describe("articulo sin costo definido", () => {
+  // Sin esta red de seguridad, un insumo con costo 0 hace que todos los productos
+  // que lo usan muestren un margen falso y la app no dice nada.
+
+  it("marca error cuando el costo promedio es cero", () => {
+    const sinPrecio = materia("ing-x", "Azucar sin precio", "kg", 2, 0);
+    const resultado = costearArticulo(sinPrecio, catalogoDe(sinPrecio));
+
+    expect(resultado.costoValido).toBe(false);
+    expect(resultado.errores).toContain("precio-invalido");
+  });
+
+  it("marca error cuando el costo promedio no es un numero", () => {
+    const sinPrecio = materia("ing-y", "Costo roto", "kg", 2, Number.NaN);
+    const resultado = costearArticulo(sinPrecio, catalogoDe(sinPrecio));
+
+    expect(resultado.costoValido).toBe(false);
+    expect(resultado.errores).toContain("precio-invalido");
+  });
+
+  it("el error sube al producto que usa ese insumo", () => {
+    const azucar = materia("ing-azucar", "Azucar sin precio", "kg", 2, 0);
+    const galletitas = preparado("prod-galletitas", "Galletitas", {
+      receta: [{ articuloId: "ing-azucar", cantidad: 200, unidad: "g" }],
+      rendimientoCantidad: 12,
+      rendimientoUnidad: "unidad",
+    });
+
+    const resultado = costearArticulo(
+      galletitas,
+      catalogoDe(azucar, galletitas),
+    );
+
+    expect(resultado.costoValido).toBe(false);
+    expect(resultado.errores).toContain("precio-invalido");
+  });
+
+  it("un articulo revendido con costo cargado no da error", () => {
+    // El caso de la carniceria: se compra y se vende, sin receta.
+    const bife = materia("art-bife", "Bife", "kg", 5, 320, {
+      esVendible: true,
+    });
+    const resultado = costearArticulo(bife, catalogoDe(bife));
+
+    expect(resultado.costoValido).toBe(true);
+    expect(resultado.costoUnitario).toBe(320);
+  });
+});
+
 describe("necesidad de insumos y faltantes", () => {
   const tortilla = preparado("pre-tortilla", "Tortilla cocida", {
     receta: [{ articuloId: "ing-masa", cantidad: 250, unidad: "g" }],
@@ -298,5 +351,58 @@ describe("precio y margen", () => {
 
   it("devuelve NaN con numeros invalidos", () => {
     expect(Number.isNaN(precioDesdeMargen(Number.NaN, 10))).toBe(true);
+  });
+});
+
+describe("receta que sale en porciones", () => {
+  // El caso que planteo el usuario: una torta entera que despues se corta
+  // en 8 porciones. La receta es de la torta entera, pero lo que se vende
+  // son las porciones. El rendimiento tiene que estar expresado en la unidad
+  // que se vende, no en la intermedia.
+
+  const harina = materia("ing-harina", "Harina", "g", 4000, 2);
+  const azucar = materia("ing-azucar", "Azucar", "g", 2000, 3);
+  const huevos = materia("ing-huevos", "Huevos", "unidad", 60, 12);
+
+  // Receta de UNA torta entera: rinde 8 porciones.
+  const torta = preparado("prod-torta", "Torta de chocolate", {
+    receta: [
+      { articuloId: harina.id, cantidad: 250, unidad: "g" },
+      { articuloId: azucar.id, cantidad: 200, unidad: "g" },
+      { articuloId: huevos.id, cantidad: 3, unidad: "unidad" },
+    ],
+    rendimientoCantidad: 8,
+    rendimientoUnidad: "unidad",
+    unidad: "unidad",
+  });
+
+  const catalogo = catalogoDe(harina, azucar, huevos, torta);
+
+  it("el costo porporcion es el de la torta dividido en 8", () => {
+    const costoTorta = 250 * 2 + 200 * 3 + 3 * 12; // 1156
+    const resultado = costearArticulo(torta, catalogo);
+    expect(resultado.costoUnitario).toBeCloseTo(costoTorta / 8, 10);
+  });
+
+  it("para 16 porciones hacen falta 2 tortas, no 16", () => {
+    const necesita = needingInsumos(torta, 16, catalogo);
+    expect(necesita.get("ing-harina")).toBeCloseTo(500, 10);
+    expect(necesita.get("ing-huevos")).toBeCloseTo(6, 10);
+  });
+
+  it("el rendimiento se interpreta en la unidad que se vende", () => {
+    // Si el rendimiento fuera la torta entera (1), 16 porciones pedirian
+    // 16 tortas. El motor tiene que asumir que 8 son porcionesvendibles.
+    const tortaEntera = preparado("prod-torta-1", "Torta", {
+      receta: torta.receta,
+      rendimientoCantidad: 1,
+      rendimientoUnidad: "unidad",
+    });
+    const necesita = needingInsumos(
+      tortaEntera,
+      16,
+      catalogoDe(tortaEntera, harina, azucar, huevos),
+    );
+    expect(necesita.get("ing-harina")).toBeCloseTo(4000, 10);
   });
 });

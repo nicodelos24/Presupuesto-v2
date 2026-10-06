@@ -18,6 +18,7 @@ export interface DatosArticulo {
   proveedorId: string | null;
   fotoUrl: string | null;
   notas: string | null;
+  duracionDias: number | null;
   receta: Articulo["receta"];
 }
 
@@ -29,9 +30,7 @@ export interface RepositorioArticulos {
   eliminar(id: Id): Promise<void>;
 }
 
-export function validarArticulo(
-  datos: DatosArticulo,
-): Record<string, string> {
+export function validarArticulo(datos: DatosArticulo): Record<string, string> {
   const errores: Record<string, string> = {};
 
   if (!datos.nombre.trim()) {
@@ -48,6 +47,20 @@ export function validarArticulo(
 
   if (datos.mermaPct < 0 || datos.mermaPct >= 100) {
     errores.mermaPct = "La merma va de 0 a 99";
+  }
+
+  if (datos.duracionDias !== null) {
+    if (!Number.isFinite(datos.duracionDias) || datos.duracionDias <= 0) {
+      errores.duracionDias = "La duración tiene que ser más de un día";
+    } else if (!Number.isInteger(datos.duracionDias)) {
+      errores.duracionDias = "Poné la duración en días enteros";
+    }
+  }
+
+  // Un articulo que se vende y no se compra ni se elabora no tiene de donde sacar costo.
+  if (datos.esVendible && !datos.esElaborado && datos.costoPromedio <= 0) {
+    errores.costoPromedio =
+      "Si lo vendés y no lo elaborás, poné a cuánto lo comprás";
   }
 
   if (datos.esElaborado) {
@@ -119,6 +132,7 @@ function semilla(): Articulo[] {
     proveedorId: null,
     fotoUrl: null,
     notas: null,
+    duracionDias: null,
     receta: [] as Articulo["receta"],
     activo: true,
   };
@@ -147,6 +161,7 @@ function semilla(): Articulo[] {
       unidad: "l",
       stock: 10,
       costoPromedio: 80,
+      duracionDias: 7,
     },
     {
       ...base,
@@ -155,6 +170,7 @@ function semilla(): Articulo[] {
       unidad: "unidad",
       stock: 30,
       costoPromedio: 10,
+      duracionDias: 21,
     },
     {
       ...base,
@@ -195,9 +211,7 @@ export function crearRepositorioMemoria(
     },
 
     async eliminar(id) {
-      datos = datos.map((a) =>
-        a.id === id ? { ...a, activo: false } : a,
-      );
+      datos = datos.map((a) => (a.id === id ? { ...a, activo: false } : a));
     },
   };
 }

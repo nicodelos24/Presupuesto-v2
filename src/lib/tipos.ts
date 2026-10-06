@@ -1,11 +1,5 @@
 export type CodigoUnidad =
-  | "g"
-  | "kg"
-  | "ml"
-  | "cl"
-  | "l"
-  | "unidad"
-  | "paquete";
+  "g" | "kg" | "ml" | "cl" | "l" | "unidad" | "paquete";
 
 export type TipoUnidad = "peso" | "volumen" | "unidad";
 
@@ -22,8 +16,17 @@ export interface ItemReceta {
 export interface Articulo {
   id: Id;
   nombre: string;
+
+  /**
+   * Solo una etiqueta para clasificar y filtrar. No manda en ningun calculo.
+   * Lo que decide el comportamiento son las dos banderas de abajo.
+   */
   tipo: TipoArticulo;
+
+  /** Se puede ofrecer al cliente. Una carne, una pizza y una salsa pueden serlo. */
   esVendible: boolean;
+
+  /** Tiene receta y se elabora en el local. */
   esElaborado: boolean;
 
   /** Unidad en la que se maneja el stock y el costo. */
@@ -53,6 +56,13 @@ export interface Articulo {
   proveedorId: string | null;
   fotoUrl: string | null;
   notas: string | null;
+
+  /**
+   * Dias que dura una unidad desde que entra al stock.
+   * null = no vence, como la harina o la pasta.
+   */
+  duracionDias: number | null;
+
   receta: ItemReceta[];
   activo: boolean;
 }
