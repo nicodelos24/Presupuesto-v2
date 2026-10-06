@@ -201,7 +201,7 @@ pediría 8 tortas para vender 8 porciones. **El número que hay que poner es 8.*
 El motor ya lo calcula bien en los dos casos:
 
 ```
-costo por porción  = costo total de la receta / rendimiento × merma
+costo por porción  = costo total de la receta / rendimiento
 tandas para N      = N / rendimiento
 ```
 
@@ -227,6 +227,36 @@ resuelto. Si aparece en el negocio de un cliente, se implementa.
 
 ---
 
+### Corrección de T12: la merma se eliminó de las recetas
+
+Este documento decía que el rendimiento y la merma eran dos cosas distintas y que había que tener
+las dos. **La merma se eliminó.** Queda acá el razonamiento para que no se vuelva a agregar.
+
+La merma se había definido como *"costo extra del proceso (aceite, especias, lo que se rompe)"*, pero
+se calculaba multiplicando la cantidad de ingredientes por `1 + merma/100`. Eso son dos hechos
+distintos con el mismo nombre:
+
+| Lo que decia la etiqueta | Lo que hacia el calculo |
+|---|---|
+| Sobrecosto del proceso | De la tanda sale menos de lo declarado |
+
+El aceite con el que se fríe es un gasto real, con factura y con precio. Ponerlo como porcentaje
+significa inventarlo. Y la luz, el gas y el agua no se calculan: se pagan.
+
+**La regla que queda:**
+
+```
+Perdida de masa        -> rendimiento   ("de esta tanda salen 6 tortillas")
+Sobrecosto del proceso -> gastos        ("este mes gas: $2.100")
+```
+
+Un campo menos en el formulario, y el numero que queda es uno que el dueño puede defender.
+
+> La tabla `gastos` ya existe y tiene una columna `gasto_por_articulo_id` que permite atribuir un
+> gasto a un articulo concreto. La pantalla todavia no existe; esta planificada en T12.
+
+**Lo que no se elimino:** el movimiento de stock tipo `merma`. Es otra cosa: se usa cuando se pudrio,
+se vencio o se rompio mercaderia, y sin el el stock deja de cuadrar.
 ### 2.1 El problema que trae: el rendimiento
 
 Una tortilla no se mide en "1 unidad". Se hace una tanda y **rinde** cierta cantidad. Y ademas
@@ -236,8 +266,8 @@ Si no se tiene en cuenta esto, todos los costos salen mal y en un sentido peligr
 mas bajo que la realidad** y el dueño vende creyendo que gana cuando no gana.
 
 ```
-Arroz:   500 g   ->  rinde 400 g cocidos   (merma 20%)
-Salsa:   1 kg    ->  rinde 800 ml          (merma 20%)
+Arroz:   500 g   ->  rinde 400 g cocidos
+Salsa:   1 kg    ->  rinde 800 ml
 Tortilla: 250 g de masa -> rinde 6 unidades
 ```
 
@@ -247,7 +277,7 @@ Por eso cada receta necesita **tres campos que no estan en tu plan**:
 | ---------------------- | -------------------------------------------------- | ------- |
 | `rendimiento_cantidad` | Cuanto rinde una tanda                             | 400     |
 | `rendimiento_unidad`   | En que se mide ese rendimiento                     | g       |
-| `merma_pct`            | Cuanto se pierde al elaborar (opcional, se deduce) | 20      |
+| `duracion_dias`         | Cuanto dura una unidad en stock (opcional)          | 4       |
 
 Con eso, el costo por unidad de la tortilla se calcula sobre lo que **realmente** sale.
 
@@ -387,7 +417,7 @@ articulos
   id, negocio_id, nombre, tipo (materia_prima | preparado | producto)
   es_vendible      -- se puede vender
   unidad_base, stock, costo_promedio
-  rendimiento_cantidad, rendimiento_unidad, merma_pct
+  rendimiento_cantidad, rendimiento_unidad, duracion_dias
   proveedor_id, foto, activo
 ```
 

@@ -101,47 +101,48 @@ problema es que cada máquina resuelve la URL como puede.
 
 ### Tareas ejecutadas
 
-| #                                                                              | Tarea                                                  | Estado      |
-| ------------------------------------------------------------------------------ | ------------------------------------------------------ | ----------- |
-| [T00](#t00--documentación-de-la-v1)                                            | Documentación de la v1                                 | Completada  |
-| [T01](#t01--commit-y-push-de-la-documentación)                                 | Commit y push de la documentación                      | Completada  |
-| [T02](#t02--migración-a-presupuesto-v2)                                        | Migración del repo a Presupuesto-v2                    | Completada  |
-| [T03](#t03--plan-de-producto-v2)                                               | Plan de producto v2 (visión, roadmap, este registro)   | Completada  |
-| [T03c](#t03c--confirmación-del-stack-y-modelo-de-cobro)                        | Confirmación de stack, costos reales y modelo de cobro | Completada  |
-| [T04](#t04--fase-0-cimientos)                                                  | Fase 0: cimientos del proyecto                         | Completada  |
-| [T04b](#t04b--base-de-datos-en-supabase-y-fase-1-inicio)                       | Base de datos aplicada y verificada, inicio de Fase 1  | Completada  |
-| [T05](#t05--reforma-estética-e-inventario-rama-featdiseno-profesional)         | Reforma estética e inventario                          | Completada  |
-| [T06](#t06--plan-funcional-del-sistema)                                        | Plan funcional del sistema                             | Completada  |
-| [T07](#t07--ampliación-del-plan-proveedores-stock-recetas-de-recetas-y-avisos) | Ampliación del plan y modelo de datos                  | Completada  |
-| [T08](#t08--artículos-unificados-motor-recursivo-y-recetario)                  | Artículos unificados, motor recursivo y recetario      | Completada  |
-| [T09b](#t09b--ajuste-de-stock-y-compra-de-urgencia)                            | Ajuste de stock y compra de urgencia                   | Documentada |
-| [T10](#t10--todo-vendible-vencimientos-y-receta-de-recetas)                    | Todo vendible, vencimientos y receta de recetas        | Completada  |
+| # | Tarea | Estado |
+|---|---|---|
+| [T00](#t00--documentación-de-la-v1) | Documentación de la v1 | Completada |
+| [T01](#t01--commit-y-push-de-la-documentación) | Commit y push de la documentación | Completada |
+| [T02](#t02--migración-a-presupuesto-v2) | Migración del repo a Presupuesto-v2 | Completada |
+| [T03](#t03--plan-de-producto-v2) | Plan de producto v2 (visión, roadmap, este registro) | Completada |
+| [T03c](#t03c--confirmación-del-stack-y-modelo-de-cobro) | Confirmación de stack, costos reales y modelo de cobro | Completada |
+| [T04](#t04--fase-0-cimientos) | Fase 0: cimientos del proyecto | Completada |
+| [T04b](#t04b--base-de-datos-en-supabase-y-fase-1-inicio) | Base de datos aplicada y verificada, inicio de Fase 1 | Completada |
+| [T05](#t05--reforma-estética-e-inventario-rama-featdiseno-profesional) | Reforma estética e inventario | Completada |
+| [T06](#t06--plan-funcional-del-sistema) | Plan funcional del sistema | Completada |
+| [T07](#t07--ampliación-del-plan-proveedores-stock-recetas-de-recetas-y-avisos) | Ampliación del plan y modelo de datos | Completada |
+| [T08](#t08--artículos-unificados-motor-recursivo-y-recetario) | Artículos unificados, motor recursivo y recetario | Completada |
+| [T09b](#t09b--ajuste-de-stock-y-compra-de-urgencia) | Ajuste de stock y compra de urgencia | Documentada |
+| [T10](#t10--todo-vendible-vencimientos-y-receta-de-recetas) | Todo vendible, vencimientos y receta de recetas | Completada |
+| [T11](#t11--separación-de-pantallas-y-recetas-que-salen-en-porciones) | Separación de pantallas y recetas que salen en porciones | Completada |
+| [T12](#t12--se-elimina-la-merma-de-las-recetas-y-se-planifican-los-gastos) | Se elimina la merma y se planifican los gastos | Completada |
 
+### Fases planificadas
 
-#### Inventario de la deuda técnica
+| # | Fase | Estado |
+|---|---|---|
+| [F0](#f0--fase-0-cimientos-alcance-previsto) | Fase 0: cimientos | Completada |
+| [F1](#f1--fase-1-diseño-y-navegación-alcance-previsto) | Fase 1: diseño y navegación | Completada |
+| [F2](#f2--fase-2-cuentas-y-negocios-alcance-previsto) | Fase 2: cuentas y negocios | Pendiente |
+| [F3](#f3--fase-3-inventario-y-costos-reales-alcance-previsto) | Fase 3: inventario y costos reales | Pendiente |
+| [F4](#f4--fase-4-clientes-y-pedidos-alcance-previsto) | Fase 4: clientes y pedidos | Pendiente |
+| [F5](#f5--fase-5-agenda-y-entregas-alcance-previsto) | Fase 5: agenda y entregas | Pendiente |
+
+### Inventario de la deuda técnica
 
 Los problemas verificados que hay hoy en el código, con la forma de comprobarlos, viven en
 [DEUDA_TECNICA.md](DEUDA_TECNICA.md) y no se repiten acá. Cada tarea que cierre uno lo borra de esa
 lista y lo registra en su entrada correspondiente.
 
-Se crea después de T11, al auditar qué de lo que se había conversado quedó anotado y qué no. El
-resultado de esa auditoría fue que faltaban cinco problemas, siendo el más grave que **no hay
-persistencia: los datos se pierden al recargar la página**.
+Esa lista se creó después de T11, al auditar qué de lo que se había conversado quedó anotado y qué
+no. El resultado fue que faltaban cinco problemas, siendo el más grave que **no hay persistencia:
+los datos se pierden al recargar la página**.
 
 Esa auditoría también desmintió una sospecha: se creía que la merma se contaba dos veces al anidar
-recetas, y al comprobarlo con un test resultó que no. El cálculo de costo y el consumo de insumos
-coinciden exactamente. El test que lo fija quedó en `src/lib/coherencia.test.ts`.
-
-## Fases planificadas
-
-| #                                                             | Fase                               | Estado     |
-| ------------------------------------------------------------- | ---------------------------------- | ---------- |
-| [F0](#f0--fase-0-cimientos-alcance-previsto)                  | Fase 0: cimientos                  | Completada |
-| [F1](#f1--fase-1-diseño-y-navegación-alcance-previsto)        | Fase 1: diseño y navegación        | Completada |
-| [F2](#f2--fase-2-cuentas-y-negocios-alcance-previsto)         | Fase 2: cuentas y negocios         | Pendiente  |
-| [F3](#f3--fase-3-inventario-y-costos-reales-alcance-previsto) | Fase 3: inventario y costos reales | Pendiente  |
-| [F4](#f4--fase-4-clientes-y-pedidos-alcance-previsto)         | Fase 4: clientes y pedidos         | Pendiente  |
-| [F5](#f5--fase-5-agenda-y-entregas-alcance-previsto)          | Fase 5: agenda y entregas          | Pendiente  |
+recetas, y al comprobarlo con un test resultó que no. El test que lo fija quedó en
+`src/lib/coherencia.test.ts`. La merma como porcentaje se eliminó después, en T12.
 
 ---
 
@@ -1399,8 +1400,167 @@ no vuelva a pasar.
 | D29 | El Recetario siempre crea artículos elaborados y vendibles | Lo que se compra y se revende vive en Inventario | Sí |
 | D30 | El rendimiento se expresa en la unidad que se vende | Hace que el motor resuelva la torta en 8 porciones sin una entidad aparte | Sí |
 | D31 | Vender la torta entera y porciones a la vez queda pendiente | Requiere que una porción herede el costo de la torta, que el motor no resuelve | No (es una limitación real) |
+---
+
+## T12 · Se elimina la merma de las recetas y se planifican los gastos
+
+### Prompts textuales
+
+> "Esa parte de la merma no la veo muy necesaria la verdad, creo que es un gasto que el usuario debe
+> saber, y no se calcula con la aplicación (que es lo que tendría sentido) La idea sería que se calculen
+> cuánto viene de luz/gas/agua, etc por mes para que esas cosas se puedan agregar como parte del costo
+> del producto, pero que sea una opción adicional, sería algo muy bueno para el usuario tener algo así
+> implementado, es una de las cosas que podemos agregar en el ia guide y las cosas por implementar, pero
+> por ahora esa función de merma deberíamos quitarla"
+
+### Estado
+
+La **eliminación de la merma** está completa. La **pantalla de gastos** queda planificada, sin
+implementar.
+
+## Qué estaba mal de la merma
+
+La merma se había definido en `T08` como *"costo extra del proceso (aceite, especias, lo que se
+rompe)"*, pero se calculaba multiplicando la cantidad de ingredientes:
+
+```ts
+resultado = (costeo.costoTotal / rendimiento) * (1 + mermaPct / 100)
+```
+
+Eso son dos cosas distintas con el mismo nombre:
+
+| Lo que dice la etiqueta | Lo que hace el cálculo |
+|---|---|
+| Es el sobrecosto del proceso | Es "sale menos de lo que declaraste" |
+
+Una torta que rinde 6 con 20% de merma no es una torta que costó 20% más: es una torta de la que
+salieron menos. Son dos hechos distintos sobre la mesa.
+
+**La observación del usuario es la correcta:** el aceite con el que se fríe es un gasto real, con
+factura y con un precio concreto. Meterlo como porcentaje significa inventarlo. Y la luz, el gas y el
+agua tampoco se calculan: se pagan.
+
+## Qué se eliminó
+
+| Dónde | Qué |
+|---|---|
+| `tipos.ts` | El campo `mermaPct` |
+| `costoRecetas.ts` | Las dos multiplicaciones por merma |
+| `datos/articulos.ts` | El campo, su validación y la semilla |
+| `Recetario.svelte` | El campo *"Costo extra del proceso (%)"* del formulario |
+| `Inventario.svelte` | El valor que se pasaba al guardar |
+| Base de datos | La columna, con la migración `0005_quitar_merma.sql` |
+
+El motor quedó más simple: el costo de un preparado es exactamente
+
+```
+costo total de la receta / rendimiento
+```
+
+**Lo que NO se eliminó:** el movimiento de stock tipo `merma`. Es otra cosa: se usa cuando se pudrió,
+se venció o se rompió mercadería, y sigue haciendo falta para que el stock cuadre. `verificar_0005.sql`
+comprueba que sigue existiendo, justamente para que nadie lo borre por confusion.
+
+## La decisión de fondo
+
+> La pérdida de masa la cubre el **rendimiento**, que es el campo que existe para eso.
+> El sobrecosto del proceso es un **gasto real**, que se registra en la tabla `gastos`.
+
+Un campo menos en el formulario, y el número que queda es uno que el dueño puede defender: *"salen 6
+tortillas de esta tanda"*, no *"esta receta tiene 15% de merma"* que nadie sabe de dónde salió.
+
+## Lo que queda planificado: la pantalla de gastos
+
+**La tabla ya existe** en la migración `0002` y está lista:
+
+```sql
+create table public.gastos (
+  id, negocio_id,
+  categoria text not null,              -- luz, gas, agua, packaging...
+  concepto text not null,
+  monto numeric not null,
+  fecha date not null,
+  proveedor_id uuid,
+  gasto_por_articulo_id uuid,           -- <-- permite atribuir el gasto a un artículo
+  notas text, creado_en
+);
+```
+
+Esa última columna es la que hace posible lo que el usuario pidió: **que un gasto entre al costo de un
+producto**. Ya está en el esquema, no hay que rediseñar nada.
+
+### Cómo se vería
+
+```
+Gastos del mes
+  Luz .................. $ 4.200
+  Gas .................. $ 2.100
+  Agua ................. $   900
+  Packaging ............ $ 1.300
+  ─────────────────────────────
+  Total ................ $ 8.500
+
+El ACEITE para freír, en cambio, es directo:
+  se compra como un insumo más y entra en la receta.
+```
+
+Esa distinción es la clave y conviene que la pantalla la enseñe: **lo que se gasta fraccionando (la
+luz, el agua) se reparte; lo que se gasta por unidad (el aceite, el packaging) se compra como
+insumo**.
+
+### El problema abierto: cómo se reparte
+
+Un gasto de luz de $4.200 por mes no se divide entre los productos de la misma manera. Hay tres
+criterios posibles y cada uno sirve para un negocio distinto:
+
+| Criterio | Cómo reparte | Le sirve a |
+|---|---|---|
+| **Sobre la venta** | El 8% de la venta de cada producto es luz | Cuando no hay forma de medir. Simple, y es el que usa la mayoría |
+| **Por consumo** | La torta consume X kWh porque se frió Y minutos | Cuando hay contador o se puede medir de verdad |
+| **Directo al artículo** | El $1.300 de packaging es solo de las cajas | Cuando el gasto se puede atribuir sin repartir |
+
+**Este es el punto a decidir y no está resuelto.** Por eso la pantalla queda como opción adicional y
+no como algo obligatorio: si el dueño no carga gastos, el sistema sigue funcionando igual y los
+márgenes que muestra son los de insumos, que es lo que la mayoría de los negocios quiere ver.
+
+### Por qué es una buena función
+
+Es de lo poco que justifica cobrar el servicio. Un cuaderno no calcula cuánto de la boleta de luz te
+corresponde a cada torta. Y es exactamente el dato que falta para saber si el negocio **gana** en
+realidad: hoy el margen que muestra el sistema es sobre insumos, no sobre el resultado final.
+
+### Orden sugerido
+
+Va después del libro de movimientos, porque los gastos se registran con la misma lógica: un hecho que
+pasa, con fecha, que queda registrado y que nunca se edita a mano.
+
+```
+1. Libro de movimientos (el stock sale de compras y producción)
+2. Pantalla de gastos con los tres criterios de reparto
+3. Resultado mensual: ventas - insumos - gastos
+```
+
+El paso 3 es el que cierra el círculo financiero y es el que va a justificar el precio del servicio.
+
+### Verificaciones
+
+| Verificación | Resultado |
+|---|---|
+| Tests | 48 pasan |
+| Typecheck | 0 errores, 0 avisos |
+| ESLint | 0 errores |
+| Build | Correcto |
+
+### Decisiones
+
+| # | Decisión | Motivo | Reversible |
+|---|---|---|---|
+| D32 | Se elimina el porcentaje de merma de las recetas | Fingía ser un sobrecosto y en realidad multiplicaba cantidades. El sobrecosto real va a la tabla de gastos | Sí, pero requiere volver a calcular los costos |
+| D33 | El movimiento de stock tipo `merma` se conserva | Es mercadería que se pudrió, no un porcentaje. Sin él el stock deja de cuadrar | No (es el libro de movimientos) |
+| D34 | Los gastos son una función opcional | Si el dueño no los carga, el sistema funciona igual y el margen es el de insumos | Sí |
 
 ---
+
 
 
 ## Fases planificadas

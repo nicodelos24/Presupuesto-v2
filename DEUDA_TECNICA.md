@@ -135,31 +135,19 @@ mismo siempre diverge en algún caso.
 
 ---
 
-## N7 · La merma significa dos cosas distintas
+## N7 · La merma se eliminó de las recetas
 
-**Estado:** abierto. **No es un error de cálculo.**
+**Estado:** **resuelto** en T12. Se deja la entrada para que quede el razonamiento.
 
-Se sospechó que la merma se contaba dos veces al anidar recetas, y se comprobó que **no pasa**: el
-costeo de un plato y el costo de los insumos que hace falta gastar dan exactamente lo mismo. Hay un
-test que lo fija en `src/lib/coherencia.test.ts`.
+Existió para dejar asentada una contradicción: la merma se llamaba *"costo extra del proceso"* pero
+multiplicaba cantidades, que es otra cosa. La solución no fue aclararlo, fue quitarla.
 
-Lo que sí hay es una **ambigüedad en qué significa**:
-
-| Dónde | Dice | Significa |
-|---|---|---|
-| `tipos.ts` | *"Costo extra del proceso (aceite, especias, lo que se rompe)"* | Sobrecosto |
-| El cálculo | `cantidad × merma` multiplica la cantidad | Sale peor de lo declarado |
-
-Con el ejemplo de la interfaz *"Aceite, especias, lo que se rompe. La pérdida de masa va en el
-rendimiento, no acá"*, el usuario entiende que es un sobrecosto. Pero multiplicar la cantidad dice
-otra cosa: que el rendimiento declarado ya era optimista.
-
-**Qué falta:** decidir cuál de las dos es. Si es sobrecosto, el aceite debería ser un ingrediente
-más de la receta y la merma eliminarse del multiplicador. Si es "sale menos de lo esperado", la
-etiqueta de la interfaz tiene que decirlo así.
+- El sobrecosto real (aceite, luz, gas) va a la tabla `gastos`.
+- La pérdida de masa ya la cubre el rendimiento.
+- El movimiento de stock tipo `merma` sigue existiendo: es mercadería que se pudrió, no un
+  porcentaje.
 
 ---
-
 ## N8 · El stock todavía se edita a mano
 
 **Estado:** abierto. Documentado en `IA_GUIDE.md` entrada `T09b`.
