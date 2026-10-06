@@ -7,7 +7,9 @@
 <div class="space-y-5">
   <header class="flex items-start justify-between gap-3">
     <div>
-      <h1 class="text-2xl font-semibold tracking-tight text-ink-900">Pedidos</h1>
+      <h1 class="text-2xl font-semibold tracking-tight text-ink-900">
+        Pedidos
+      </h1>
       <p class="mt-1 text-sm text-ink-500">
         Quien pidio, cuanto, para cuando y cuanto falta cobrar.
       </p>

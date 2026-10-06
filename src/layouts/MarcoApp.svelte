@@ -26,7 +26,10 @@
     { id: "inventario" as const, etiqueta: "Inventario", icono: Boxes },
   ];
 
-  const itemsEscritorio = [...items, { id: "mas" as const, etiqueta: "Mas", icono: User }];
+  const itemsEscritorio = [
+    ...items,
+    { id: "mas" as const, etiqueta: "Mas", icono: User },
+  ];
 </script>
 
 <div class="min-h-dvh lg:flex">
@@ -34,7 +37,9 @@
     class="sticky top-0 hidden h-dvh w-64 shrink-0 flex-col border-r border-ink-100 bg-marca-gradiente px-4 py-6 text-white lg:flex"
   >
     <div class="px-2">
-      <p class="text-xs font-semibold uppercase tracking-[0.18em] text-white/60">
+      <p
+        class="text-xs font-semibold uppercase tracking-[0.18em] text-white/60"
+      >
         Presupuesto
       </p>
       <p class="mt-1 text-lg font-semibold">Mi negocio</p>
@@ -110,7 +115,10 @@
                   ? 'bg-brand-50'
                   : ''}"
               >
-                <item.icono size={21} strokeWidth={rutaActual === item.id ? 2.4 : 2} />
+                <item.icono
+                  size={21}
+                  strokeWidth={rutaActual === item.id ? 2.4 : 2}
+                />
               </span>
               <span class="text-[11px] leading-none font-semibold">
                 {item.etiqueta}

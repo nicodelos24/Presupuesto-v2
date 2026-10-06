@@ -64,15 +64,16 @@ export default {
       },
       boxShadow: {
         card: "0 1px 2px 0 rgb(17 26 69 / 0.04), 0 6px 16px -6px rgb(17 26 69 / 0.10)",
-        raised: "0 2px 4px -1px rgb(17 26 69 / 0.08), 0 16px 32px -12px rgb(17 26 69 / 0.18)",
+        raised:
+          "0 2px 4px -1px rgb(17 26 69 / 0.08), 0 16px 32px -12px rgb(17 26 69 / 0.18)",
         foco: "0 0 0 4px rgb(54 94 242 / 0.18)",
       },
       backgroundImage: {
         "marca-gradiente":
           "linear-gradient(135deg, #111a45 0%, #1b2eb2 55%, #365ef2 100%)",
-        "acento-gradiente":
-          "linear-gradient(135deg, #10b98a 0%, #047959 100%)",
-        "vidrio": "linear-gradient(180deg, rgb(255 255 255 / 0.92), rgb(255 255 255 / 0.78))",
+        "acento-gradiente": "linear-gradient(135deg, #10b98a 0%, #047959 100%)",
+        vidrio:
+          "linear-gradient(180deg, rgb(255 255 255 / 0.92), rgb(255 255 255 / 0.78))",
       },
       keyframes: {
         entrar: {

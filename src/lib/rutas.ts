@@ -1,10 +1,5 @@
 export type IdRuta =
-  | "inicio"
-  | "recetario"
-  | "pedidos"
-  | "agenda"
-  | "inventario"
-  | "mas";
+  "inicio" | "recetario" | "pedidos" | "agenda" | "inventario" | "mas";
 
 export interface DefinicionRuta {
   id: IdRuta;

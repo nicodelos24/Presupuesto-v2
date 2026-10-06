@@ -33,7 +33,8 @@
                 {seccion.titulo}
               </span>
               {#if seccion.detalle}
-                <span class="block text-xs text-ink-400">{seccion.detalle}</span>
+                <span class="block text-xs text-ink-400">{seccion.detalle}</span
+                >
               {/if}
             </span>
             <ChevronRight size={18} class="shrink-0 text-ink-300" />

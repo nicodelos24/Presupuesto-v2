@@ -17,7 +17,8 @@
     <div class="flex gap-1 rounded-xl bg-ink-100 p-1" role="tablist">
       {#each ["Dia", "Semana", "Mes"] as vista, i (vista)}
         <button
-          class="min-h-9 flex-1 rounded-lg text-sm font-medium transition {i === 1
+          class="min-h-9 flex-1 rounded-lg text-sm font-medium transition {i ===
+          1
             ? 'bg-white text-ink-800 shadow-card'
             : 'text-ink-500'}"
           role="tab"
